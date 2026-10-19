@@ -1,0 +1,99 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>نقشه کشف عکاسی تهران</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600&display=swap">
+<style>
+:root{--ink:#1d1c1a;--ink2:#2b2926;--paper:#f6f3ee;--mute:#8a8479;--amber:#c28a3a;--line:#d9d3c8;--r:6px;font-family:Vazirmatn,system-ui,sans-serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--paper);color:var(--ink)}
+#map{position:fixed;inset:0;background:#e8e4dc}
+.bar{position:fixed;top:max(10px,env(safe-area-inset-top));inset-inline:10px;display:flex;gap:6px;z-index:900;flex-wrap:wrap}
+.bar input{flex:1 1 200px;min-width:0;height:44px;padding:0 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);font:inherit;box-shadow:0 1px 6px #0002}
+button{font:inherit;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
+button:hover{border-color:var(--amber)}button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+button.on,.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chips{position:fixed;top:calc(max(10px,env(safe-area-inset-top)) + 100px);inset-inline:10px;display:flex;gap:6px;overflow-x:auto;z-index:800;scrollbar-width:none}
+.chip{flex:none;min-height:36px;font-size:13px}
+#notice{position:fixed;top:50%;inset-inline:20px;max-width:420px;margin:auto;z-index:1000;background:var(--ink);color:var(--paper);padding:14px;border-radius:var(--r)}
+.panel{position:fixed;z-index:1000;background:var(--paper);border:1px solid var(--line);overflow:auto;transition:transform .25s;box-shadow:0 0 18px #0003}
+@media(min-width:800px){.panel{top:0;bottom:0;inset-inline-start:0;width:380px;transform:translateX(-100%)}[dir=rtl] .panel{transform:translateX(100%)}.panel.open{transform:none!important}.handle{display:none}.chips{inset-inline-start:400px}.bar{inset-inline-start:400px}}
+@media(max-width:799px){.panel{inset-inline:0;bottom:0;max-height:72vh;border-radius:14px 14px 0 0;transform:translateY(100%)}.panel.open{transform:none}.panel.peek{transform:translateY(calc(100% - 64px))}}
+.handle{display:block;width:60px;height:24px;margin:6px auto;border:0;background:none;min-height:24px}.handle::after{content:"";display:block;height:4px;background:var(--line);border-radius:2px;margin-top:10px}
+#pbody{padding:4px 18px 28px}h2{margin:.2em 0;font-weight:600;font-size:22px}h3{font-size:14px;margin:18px 0 6px;color:var(--amber);font-weight:600}
+.en{color:var(--mute);margin:0 0 8px;direction:ltr;text-align:start}p,li{line-height:1.8;font-size:14px}ul{padding-inline-start:18px;margin:4px 0}
+.hero{height:140px;border-radius:var(--r);background:repeating-linear-gradient(135deg,var(--ink) 0 12px,var(--ink2) 12px 24px);display:grid;place-items:center;color:var(--amber);font-size:13px;margin:8px 0}
+.status{display:block;border-inline-start:4px solid var(--amber);background:#c28a3a1f;padding:10px 12px;border-radius:var(--r);font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.row a,.row button{flex:1;text-align:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:10px;font-size:14px}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--amber);border:3px solid var(--ink);box-shadow:0 1px 4px #0006}
+.sun td{padding:3px 0;font-size:14px}.sun td:last-child{direction:ltr;text-align:end}select{font:inherit;width:100%;min-height:44px;margin:4px 0}
+
+</style></head><body>
+<div id="map" aria-label="نقشه تهران"></div>
+<header class="bar"><input id="q" type="search" placeholder="جستجوی مکان، محله یا سبک…" aria-label="جستجو">
+<button id="home" title="نمای کلی تهران">تهران</button><button id="loc" title="موقعیت من">موقعیت من</button><button id="favs" aria-pressed="false">ذخیره‌شده‌ها</button><button id="plan">دستیار</button></header>
+<nav id="chips" class="chips" aria-label="فیلترها"></nav>
+<div id="notice" role="status" hidden></div>
+<aside id="panel" class="panel"><button class="handle" id="grip" aria-label="باز و بسته کردن"></button><div id="pbody"></div></aside>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script>
+const DATA=[{"id": "abo-atash", "name_fa": "پارک آب و آتش", "name_en": "Ab-o-Atash Park", "lat": 35.76, "lng": 51.4235, "neighborhood": "Modares / Abbas Abad", "categories": ["park", "view"], "styles": ["landscape", "portrait", "night"], "description": "Hillside park beside Tabiat Bridge with pools, terraces and city views."}, {"id": "tabiat", "name_fa": "پل طبیعت", "name_en": "Tabiat Bridge", "lat": 35.7573, "lng": 51.4223, "neighborhood": "Modares Expressway", "categories": ["modern", "view"], "styles": ["arch", "night", "street"], "description": "Pedestrian bridge by Leila Araghian linking Ab-o-Atash and Taleghani parks."}, {"id": "bagh-irani", "name_fa": "باغ ایرانی", "name_en": "Bagh-e Irani (Deh Vanak)", "lat": 35.759, "lng": 51.396, "neighborhood": "Deh Vanak", "categories": ["park"], "styles": ["portrait", "landscape"], "description": "Garden in Deh Vanak in the Persian-garden tradition."}, {"id": "mellat", "name_fa": "پارک ملت", "name_en": "Mellat Park", "lat": 35.758, "lng": 51.404, "neighborhood": "Vanak", "categories": ["park"], "styles": ["portrait", "landscape"], "description": "Large public park in northern Tehran."}, {"id": "jamshidieh", "name_fa": "پارک جمشیدیه", "name_en": "Jamshidieh Park", "lat": 35.811, "lng": 51.466, "neighborhood": "Niavaran / Shemiran", "categories": ["park", "view"], "styles": ["landscape", "portrait"], "description": "Mountain-edge park at the foot of the Alborz with city views."}, {"id": "golestan", "name_fa": "کاخ گلستان", "name_en": "Golestan Palace", "lat": 35.6798, "lng": 51.42, "neighborhood": "Arg / Old Tehran", "categories": ["historic", "museum"], "styles": ["arch", "portrait"], "description": "Qajar-era royal complex and UNESCO World Heritage Site."}, {"id": "national-museum", "name_fa": "موزه ملی ایران", "name_en": "National Museum of Iran", "lat": 35.688, "lng": 51.417, "neighborhood": "Imam Khomeini St.", "categories": ["museum", "historic"], "styles": ["arch"], "description": "Archaeology and Islamic-period museum in central Tehran."}, {"id": "si-tir", "name_fa": "خیابان سی تیر", "name_en": "Si-e Tir Street", "lat": 35.686, "lng": 51.422, "neighborhood": "Central Tehran", "categories": ["street"], "styles": ["street", "night"], "description": "Central street known for old facades and everyday street life."}, {"id": "darband", "name_fa": "دربند", "name_en": "Darband", "lat": 35.807, "lng": 51.429, "neighborhood": "Shemiran", "categories": ["park", "view", "street"], "styles": ["landscape", "street", "portrait"], "description": "Mountain-foot trail neighborhood with tea houses and Alborz views."}, {"id": "chitgar", "name_fa": "دریاچه چیتگر", "name_en": "Chitgar Lake", "lat": 35.743, "lng": 51.214, "neighborhood": "Chitgar, west Tehran", "categories": ["park", "view"], "styles": ["landscape", "portrait"], "description": "Large artificial lake in Chitgar Forest Park."}, {"id": "azadi", "name_fa": "برج آزادی", "name_en": "Azadi Tower", "lat": 35.6997, "lng": 51.338, "neighborhood": "Azadi Square", "categories": ["modern", "historic"], "styles": ["arch", "night"], "description": "Landmark monument by Hossein Amanat, completed in the 1970s."}, {"id": "milad", "name_fa": "برج میلاد", "name_en": "Milad Tower", "lat": 35.7448, "lng": 51.3753, "neighborhood": "Gisha / Milad", "categories": ["modern", "view"], "styles": ["arch", "night", "landscape"], "description": "Telecommunication tower and skyline landmark."}, {"id": "bazaar", "name_fa": "بازار تهران", "name_en": "Grand Bazaar of Tehran", "lat": 35.6745, "lng": 51.42, "neighborhood": "Bazaar district", "categories": ["market", "historic", "street"], "styles": ["street", "portrait"], "description": "Historic covered bazaar with passages, domes and traditional trades."}, {"id": "saadabad", "name_fa": "مجموعه سعدآباد", "name_en": "Saadabad Complex", "lat": 35.81, "lng": 51.419, "neighborhood": "Shemiran", "categories": ["historic", "museum", "park"], "styles": ["arch", "landscape"], "description": "Royal palace complex with multiple museums in a wooded setting."}, {"id": "niavaran", "name_fa": "کاخ نیاوران", "name_en": "Niavaran Palace Complex", "lat": 35.8115, "lng": 51.469, "neighborhood": "Niavaran", "categories": ["historic", "museum", "park"], "styles": ["arch", "portrait"], "description": "Pahlavi-era palace complex and gardens."}, {"id": "sepahsalar", "name_fa": "مسجد سپهسالار", "name_en": "Sepahsalar Mosque", "lat": 35.69, "lng": 51.417, "neighborhood": "Baharestan", "categories": ["historic"], "styles": ["arch"], "description": "Qajar-era mosque and former school near Baharestan Square."}, {"id": "laleh", "name_fa": "پارک لاله", "name_en": "Laleh Park", "lat": 35.704, "lng": 51.389, "neighborhood": "Laleh / Enghelab", "categories": ["park"], "styles": ["portrait", "street"], "description": "Central city park, close to the Carpet Museum and theatre."}, {"id": "book-garden", "name_fa": "باغ کتاب", "name_en": "Book Garden (Bagh-e Ketab)", "lat": 35.7625, "lng": 51.438, "neighborhood": "Abbas Abad", "categories": ["modern", "park"], "styles": ["arch", "portrait"], "description": "Large modern cultural complex and garden."}, {"id": "ferdows", "name_fa": "باغ فردوس", "name_en": "Ferdows Garden", "lat": 35.799, "lng": 51.439, "neighborhood": "Shemiran", "categories": ["historic", "museum", "park"], "styles": ["arch", "portrait"], "description": "Qajar-era garden and pavilion, home to the Cinema Museum."}, {"id": "tajrish", "name_fa": "بازار تجریش", "name_en": "Tajrish Bazaar", "lat": 35.8045, "lng": 51.433, "neighborhood": "Tajrish", "categories": ["market", "street"], "styles": ["street", "portrait"], "description": "Lively traditional bazaar beside Imamzadeh Saleh."}];
+'use strict';
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CAT={park:'پارک و باغ',historic:'معماری تاریخی',museum:'موزه',street:'خیابان و کوچه',modern:'معماری مدرن',view:'چشم‌انداز',market:'بازار'};
+const STY={portrait:'پرتره',street:'عکاسی خیابانی',night:'شب',landscape:'منظره',arch:'معماری'};
+const TIPS={park:['نور نرم صبح یا ۱ ساعت مانده به غروب؛ سایهٔ درختان را برای پرتره بسنجید.','لنز ۵۰–۸۵ میلی‌متر برای پرتره، ۲۴–۳۵ برای منظره.'],historic:['نور جانبی جزئیات کاشی و آجر را برجسته می‌کند؛ ظهر سایه‌های تند می‌سازد.','لنز واید ۱۶–۲۴ برای فضاهای بسته؛ خطوط عمودی را صاف نگه دارید.'],museum:['فضای داخلی معمولاً کم‌نور است؛ ISO بالاتر و دیافراگم باز. سه‌پایه و فلاش اغلب ممنوع است.','لنز ۳۵ یا ۵۰ با دیافراگم باز.'],street:['نور غروب و ساعت آبی برای حال‌وهوای شهری.','لنز ۲۸–۳۵؛ فاصلهٔ کانونی ثابت (زون فوکوس) سرعت می‌دهد.'],modern:['ساعت آبی و شب برای نورپردازی سازه؛ سه‌پایه کمک می‌کند.','لنز واید و ایستادن در زاویه‌های قطری.'],view:['غروب و ساعت آبی؛ هوای پس از باران دید را بهتر می‌کند.','لنز ۷۰–۲۰۰ برای فشرده‌کردن لایه‌های شهر.'],market:['نور داخل بازار کم و مختلط است؛ ISO بالاتر.','پیش از عکاسی از افراد اجازه بگیرید.']};
+const PERM='قوانین عکاسی تأیید نشده است';
+let L_=[],map,cluster,markers={},sel=new Set(),fav=new Set(JSON.parse(localStorage.getItem('fav')||'[]')),showFav=false,user=null;
+const note=(t)=>{const n=$('#notice');n.textContent=t;n.hidden=!t;if(t)setTimeout(()=>n.hidden=true,6000)};
+const rad=Math.PI/180,tehran=[35.7,51.39];
+function dist(a,b){const dx=(a[1]-b[1])*Math.cos(a[0]*rad),dy=a[0]-b[0];return Math.hypot(dx,dy)*111}
+function sun(lat,lng,d=new Date()){const y=d.getFullYear(),n=Math.floor((Date.UTC(y,d.getMonth(),d.getDate())-Date.UTC(y,0,0))/864e5),B=rad*360/365*(n-81),dec=Math.asin(Math.sin(rad*23.44)*Math.sin(B)),eot=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B),ha=Math.acos(-Math.tan(lat*rad)*Math.tan(dec))/rad/15,noon=12-lng/15-eot/60,base=Date.UTC(y,d.getMonth(),d.getDate()),t=h=>new Date(base+h*36e5),az=Math.acos(Math.sin(dec)/Math.cos(lat*rad))/rad;return{rise:t(noon-ha),set:t(noon+ha),az}}
+const fmt=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tehran'});
+const add=(d,m)=>new Date(d.getTime()+m*6e4);
+function matches(l){const q=$('#q').value.trim().toLowerCase();if(showFav&&!fav.has(l.id))return false;
+ if(sel.size&&![...sel].every(k=>l.categories.includes(k)||l.styles.includes(k)))return false;
+ return !q||[l.name_fa,l.name_en,l.neighborhood,...l.categories.map(c=>CAT[c]),...l.styles.map(s=>STY[s])].join(' ').toLowerCase().includes(q)}
+function render(){cluster.clearLayers();const r=L_.filter(matches);r.forEach(l=>cluster.addLayer(markers[l.id]));
+ if(!r.length)note('نتیجه‌ای پیدا نشد. فیلترها را پاک کنید.');return r}
+function chips(){const el=$('#chips');el.innerHTML='';
+ const mk=(k,t)=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>{sel.has(k)?sel.delete(k):sel.add(k);b.classList.toggle('on');b.setAttribute('aria-pressed',sel.has(k));render()};el.append(b)};
+ Object.entries(CAT).forEach(([k,v])=>mk(k,v));Object.entries(STY).forEach(([k,v])=>mk(k,v));
+ const c=document.createElement('button');c.className='chip';c.textContent='پاک کردن فیلترها';c.onclick=()=>{sel.clear();$('#q').value='';showFav=false;$('#favs').classList.remove('on');chips();render()};el.append(c)}
+function open(l){const s=sun(l.lat,l.lng),p=$('#panel');
+ const list=a=>'<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';
+ const tips=l.categories.flatMap(c=>TIPS[c]||[]);
+ $('#pbody').innerHTML=`<h2>${esc(l.name_fa)}</h2><p class="en">${esc(l.name_en)}</p>
+ <div class="hero">تصویر تأییدشده‌ای موجود نیست</div>
+ <span class="status"><b>وضعیت عکاسی:</b> ${PERM}. پیش از رفتن با مجموعه تماس بگیرید.</span>
+ <p>${esc(l.description)}</p><p>${esc(l.neighborhood)} · ${l.lat.toFixed(4)}, ${l.lng.toFixed(4)}<br><small>مختصات تقریبی است؛ روی نقشه بررسی کنید.</small></p>
+ <div>${l.categories.map(c=>CAT[c]).concat(l.styles.map(c=>STY[c])).map(esc).join('، ')}</div>
+ <div class="row"><a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}" target="_blank" rel="noopener">مسیریابی</a><button id="fv">${fav.has(l.id)?'حذف از ذخیره‌ها':'ذخیره'}</button></div>
+ <h3>نور و زمان</h3><table class="sun"><tr><td>طلوع</td><td>${fmt(s.rise)}</td></tr><tr><td>غروب</td><td>${fmt(s.set)}</td></tr><tr><td>ساعت طلایی (تقریبی)</td><td>${fmt(add(s.set,-60))}–${fmt(s.set)}</td></tr><tr><td>ساعت آبی (تقریبی)</td><td>${fmt(s.set)}–${fmt(add(s.set,30))}</td></tr><tr><td>جهت غروب</td><td>${(360-s.az).toFixed(0)}° از شمال</td></tr></table><small>محاسبهٔ نجومی تقریبی برای امروز، نه وضعیت زندهٔ هوا.</small>
+ <div id="wx"><small>در حال دریافت وضعیت هوا…</small></div>
+ <h3>راهنمای عمومی (نه مختص این مکان)</h3>${list([...new Set(tips)])}
+ <h3>اطلاعات عملی</h3><ul><li>ورودی: بررسی نشده</li><li>ساعات بازدید: بررسی نشده</li><li>تردد با سه‌پایه، فلاش و عکاسی تجاری: با مجموعه هماهنگ کنید</li><li>آخرین تأیید: ندارد · منبع رسمی: ندارد</li></ul>`;
+ p.classList.add('open');p.classList.remove('peek');$('#fv').onclick=()=>{fav.has(l.id)?fav.delete(l.id):fav.add(l.id);localStorage.setItem('fav',JSON.stringify([...fav]));open(l)};
+ history.replaceState(null,'','#'+l.id);map.flyTo([l.lat,l.lng],15);
+ fetch(`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lng}&current=cloud_cover,wind_speed_10m,precipitation&daily=precipitation_probability_max&timezone=Asia%2FTehran`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(w=>{$('#wx').innerHTML=`<h3>هوای زنده (Open-Meteo)</h3><ul><li>ابر: ${w.current.cloud_cover}٪</li><li>باد: ${w.current.wind_speed_10m} km/h</li><li>احتمال بارش امروز: ${w.daily.precipitation_probability_max[0]}٪</li></ul>`}).catch(()=>{$('#wx').innerHTML='<small>وضعیت زندهٔ هوا در دسترس نیست (اتصال برقرار نیست).</small>'})}
+function planner(){$('#pbody').innerHTML=`<h2>دستیار برنامه‌ریزی</h2><label>سبک عکاسی<select id="ps">${Object.entries(STY).map(([k,v])=>`<option value="${k}">${v}</option>`)}</select></label><label>فضا<select id="pi"><option value="">هر دو</option><option value="in">سرپوشیده</option><option value="out">فضای باز</option></select></label><button id="go" style="width:100%">پیشنهاد بده</button><div id="res"></div><small>امتیازها نظر کاربران نیستند؛ فقط تطابق سبک/دسته با دادهٔ ویراستاری‌اند.</small>`;
+ $('#panel').classList.add('open');$('#go').onclick=()=>{const s=$('#ps').value,i=$('#pi').value;const ind=l=>l.categories.some(c=>c==='museum'||c==='market');
+  const r=L_.filter(l=>l.styles.includes(s)&&(!i||(i==='in')===ind(l))).sort((a,b)=>(user?dist(user,[a.lat,a.lng])-dist(user,[b.lat,b.lng]):0));
+  $('#res').innerHTML=r.length?'<ul>'+r.map(l=>`<li><a href="#${l.id}" data-id="${l.id}">${esc(l.name_fa)}</a> — سبک «${STY[s]}» در دادهٔ این مکان ثبت شده است.</li>`).join('')+'</ul>':'<p>مکانی مطابق این ترجیح‌ها نیست.</p>';
+  $('#res').querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();open(L_.find(l=>l.id===a.dataset.id))})}}
+async function init(){map=L.map('map',{zoomControl:true}).setView(tehran,11);
+ const t=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);let err=0;t.on('tileerror',()=>{if(++err===3)note('کاشی‌های نقشه بارگذاری نمی‌شوند. اتصال اینترنت را بررسی کنید.')});
+ cluster=L.markerClusterGroup().addTo(map);
+ L_=DATA;
+ L_.forEach(l=>{const m=L.marker([l.lat,l.lng],{title:l.name_en,icon:L.divIcon({className:'',html:'<div class="dot"></div>',iconSize:[16,16]})});m.on('click',()=>open(l));markers[l.id]=m});
+ chips();render();const h=L_.find(l=>'#'+l.id===location.hash);if(h)open(h)}
+$('#q').oninput=render;$('#home').onclick=()=>map.flyTo(tehran,11);
+$('#favs').onclick=e=>{showFav=!showFav;e.target.classList.toggle('on',showFav);e.target.setAttribute('aria-pressed',showFav);render()};
+$('#loc').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{user=[p.coords.latitude,p.coords.longitude];L.circleMarker(user,{radius:7}).addTo(map);map.flyTo(user,14)},()=>note('دسترسی به موقعیت داده نشد.')):note('مرورگر از موقعیت‌یابی پشتیبانی نمی‌کند.');
+$('#plan').onclick=planner;
+$('#grip').onclick=()=>$('#panel').classList.toggle('peek');
+addEventListener('keydown',e=>{if(e.key==='Escape')$('#panel').classList.remove('open')});
+init();
+
+</script></body></html>
