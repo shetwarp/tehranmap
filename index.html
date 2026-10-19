@@ -1,99 +1,2097 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>نقشه کشف عکاسی تهران</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600&display=swap">
-<style>
-:root{--ink:#1d1c1a;--ink2:#2b2926;--paper:#f6f3ee;--mute:#8a8479;--amber:#c28a3a;--line:#d9d3c8;--r:6px;font-family:Vazirmatn,system-ui,sans-serif}
-*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--paper);color:var(--ink)}
-#map{position:fixed;inset:0;background:#e8e4dc}
-.bar{position:fixed;top:max(10px,env(safe-area-inset-top));inset-inline:10px;display:flex;gap:6px;z-index:900;flex-wrap:wrap}
-.bar input{flex:1 1 200px;min-width:0;height:44px;padding:0 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);font:inherit;box-shadow:0 1px 6px #0002}
-button{font:inherit;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
-button:hover{border-color:var(--amber)}button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-button.on,.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.chips{position:fixed;top:calc(max(10px,env(safe-area-inset-top)) + 100px);inset-inline:10px;display:flex;gap:6px;overflow-x:auto;z-index:800;scrollbar-width:none}
-.chip{flex:none;min-height:36px;font-size:13px}
-#notice{position:fixed;top:50%;inset-inline:20px;max-width:420px;margin:auto;z-index:1000;background:var(--ink);color:var(--paper);padding:14px;border-radius:var(--r)}
-.panel{position:fixed;z-index:1000;background:var(--paper);border:1px solid var(--line);overflow:auto;transition:transform .25s;box-shadow:0 0 18px #0003}
-@media(min-width:800px){.panel{top:0;bottom:0;inset-inline-start:0;width:380px;transform:translateX(-100%)}[dir=rtl] .panel{transform:translateX(100%)}.panel.open{transform:none!important}.handle{display:none}.chips{inset-inline-start:400px}.bar{inset-inline-start:400px}}
-@media(max-width:799px){.panel{inset-inline:0;bottom:0;max-height:72vh;border-radius:14px 14px 0 0;transform:translateY(100%)}.panel.open{transform:none}.panel.peek{transform:translateY(calc(100% - 64px))}}
-.handle{display:block;width:60px;height:24px;margin:6px auto;border:0;background:none;min-height:24px}.handle::after{content:"";display:block;height:4px;background:var(--line);border-radius:2px;margin-top:10px}
-#pbody{padding:4px 18px 28px}h2{margin:.2em 0;font-weight:600;font-size:22px}h3{font-size:14px;margin:18px 0 6px;color:var(--amber);font-weight:600}
-.en{color:var(--mute);margin:0 0 8px;direction:ltr;text-align:start}p,li{line-height:1.8;font-size:14px}ul{padding-inline-start:18px;margin:4px 0}
-.hero{height:140px;border-radius:var(--r);background:repeating-linear-gradient(135deg,var(--ink) 0 12px,var(--ink2) 12px 24px);display:grid;place-items:center;color:var(--amber);font-size:13px;margin:8px 0}
-.status{display:block;border-inline-start:4px solid var(--amber);background:#c28a3a1f;padding:10px 12px;border-radius:var(--r);font-size:14px}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.row a,.row button{flex:1;text-align:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:var(--r);padding:10px;font-size:14px}
-.dot{width:16px;height:16px;border-radius:50%;background:var(--amber);border:3px solid var(--ink);box-shadow:0 1px 4px #0006}
-.sun td{padding:3px 0;font-size:14px}.sun td:last-child{direction:ltr;text-align:end}select{font:inherit;width:100%;min-height:44px;margin:4px 0}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="نقشه تعاملی مکان‌های عکاسی تهران — راهنمای حرفه‌ای لوکیشن، نور، ترکیب‌بندی و مجوزها">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>نقشه کشف عکاسی تهران</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <style>
+/* ============================================================
+   Photography Discovery Map — Tehran
+   Design tokens: charcoal, warm-white, muted amber
+   ============================================================ */
 
-</style></head><body>
-<div id="map" aria-label="نقشه تهران"></div>
-<header class="bar"><input id="q" type="search" placeholder="جستجوی مکان، محله یا سبک…" aria-label="جستجو">
-<button id="home" title="نمای کلی تهران">تهران</button><button id="loc" title="موقعیت من">موقعیت من</button><button id="favs" aria-pressed="false">ذخیره‌شده‌ها</button><button id="plan">دستیار</button></header>
-<nav id="chips" class="chips" aria-label="فیلترها"></nav>
-<div id="notice" role="status" hidden></div>
-<aside id="panel" class="panel"><button class="handle" id="grip" aria-label="باز و بسته کردن"></button><div id="pbody"></div></aside>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
-<script>
-const DATA=[{"id": "abo-atash", "name_fa": "پارک آب و آتش", "name_en": "Ab-o-Atash Park", "lat": 35.76, "lng": 51.4235, "neighborhood": "Modares / Abbas Abad", "categories": ["park", "view"], "styles": ["landscape", "portrait", "night"], "description": "Hillside park beside Tabiat Bridge with pools, terraces and city views."}, {"id": "tabiat", "name_fa": "پل طبیعت", "name_en": "Tabiat Bridge", "lat": 35.7573, "lng": 51.4223, "neighborhood": "Modares Expressway", "categories": ["modern", "view"], "styles": ["arch", "night", "street"], "description": "Pedestrian bridge by Leila Araghian linking Ab-o-Atash and Taleghani parks."}, {"id": "bagh-irani", "name_fa": "باغ ایرانی", "name_en": "Bagh-e Irani (Deh Vanak)", "lat": 35.759, "lng": 51.396, "neighborhood": "Deh Vanak", "categories": ["park"], "styles": ["portrait", "landscape"], "description": "Garden in Deh Vanak in the Persian-garden tradition."}, {"id": "mellat", "name_fa": "پارک ملت", "name_en": "Mellat Park", "lat": 35.758, "lng": 51.404, "neighborhood": "Vanak", "categories": ["park"], "styles": ["portrait", "landscape"], "description": "Large public park in northern Tehran."}, {"id": "jamshidieh", "name_fa": "پارک جمشیدیه", "name_en": "Jamshidieh Park", "lat": 35.811, "lng": 51.466, "neighborhood": "Niavaran / Shemiran", "categories": ["park", "view"], "styles": ["landscape", "portrait"], "description": "Mountain-edge park at the foot of the Alborz with city views."}, {"id": "golestan", "name_fa": "کاخ گلستان", "name_en": "Golestan Palace", "lat": 35.6798, "lng": 51.42, "neighborhood": "Arg / Old Tehran", "categories": ["historic", "museum"], "styles": ["arch", "portrait"], "description": "Qajar-era royal complex and UNESCO World Heritage Site."}, {"id": "national-museum", "name_fa": "موزه ملی ایران", "name_en": "National Museum of Iran", "lat": 35.688, "lng": 51.417, "neighborhood": "Imam Khomeini St.", "categories": ["museum", "historic"], "styles": ["arch"], "description": "Archaeology and Islamic-period museum in central Tehran."}, {"id": "si-tir", "name_fa": "خیابان سی تیر", "name_en": "Si-e Tir Street", "lat": 35.686, "lng": 51.422, "neighborhood": "Central Tehran", "categories": ["street"], "styles": ["street", "night"], "description": "Central street known for old facades and everyday street life."}, {"id": "darband", "name_fa": "دربند", "name_en": "Darband", "lat": 35.807, "lng": 51.429, "neighborhood": "Shemiran", "categories": ["park", "view", "street"], "styles": ["landscape", "street", "portrait"], "description": "Mountain-foot trail neighborhood with tea houses and Alborz views."}, {"id": "chitgar", "name_fa": "دریاچه چیتگر", "name_en": "Chitgar Lake", "lat": 35.743, "lng": 51.214, "neighborhood": "Chitgar, west Tehran", "categories": ["park", "view"], "styles": ["landscape", "portrait"], "description": "Large artificial lake in Chitgar Forest Park."}, {"id": "azadi", "name_fa": "برج آزادی", "name_en": "Azadi Tower", "lat": 35.6997, "lng": 51.338, "neighborhood": "Azadi Square", "categories": ["modern", "historic"], "styles": ["arch", "night"], "description": "Landmark monument by Hossein Amanat, completed in the 1970s."}, {"id": "milad", "name_fa": "برج میلاد", "name_en": "Milad Tower", "lat": 35.7448, "lng": 51.3753, "neighborhood": "Gisha / Milad", "categories": ["modern", "view"], "styles": ["arch", "night", "landscape"], "description": "Telecommunication tower and skyline landmark."}, {"id": "bazaar", "name_fa": "بازار تهران", "name_en": "Grand Bazaar of Tehran", "lat": 35.6745, "lng": 51.42, "neighborhood": "Bazaar district", "categories": ["market", "historic", "street"], "styles": ["street", "portrait"], "description": "Historic covered bazaar with passages, domes and traditional trades."}, {"id": "saadabad", "name_fa": "مجموعه سعدآباد", "name_en": "Saadabad Complex", "lat": 35.81, "lng": 51.419, "neighborhood": "Shemiran", "categories": ["historic", "museum", "park"], "styles": ["arch", "landscape"], "description": "Royal palace complex with multiple museums in a wooded setting."}, {"id": "niavaran", "name_fa": "کاخ نیاوران", "name_en": "Niavaran Palace Complex", "lat": 35.8115, "lng": 51.469, "neighborhood": "Niavaran", "categories": ["historic", "museum", "park"], "styles": ["arch", "portrait"], "description": "Pahlavi-era palace complex and gardens."}, {"id": "sepahsalar", "name_fa": "مسجد سپهسالار", "name_en": "Sepahsalar Mosque", "lat": 35.69, "lng": 51.417, "neighborhood": "Baharestan", "categories": ["historic"], "styles": ["arch"], "description": "Qajar-era mosque and former school near Baharestan Square."}, {"id": "laleh", "name_fa": "پارک لاله", "name_en": "Laleh Park", "lat": 35.704, "lng": 51.389, "neighborhood": "Laleh / Enghelab", "categories": ["park"], "styles": ["portrait", "street"], "description": "Central city park, close to the Carpet Museum and theatre."}, {"id": "book-garden", "name_fa": "باغ کتاب", "name_en": "Book Garden (Bagh-e Ketab)", "lat": 35.7625, "lng": 51.438, "neighborhood": "Abbas Abad", "categories": ["modern", "park"], "styles": ["arch", "portrait"], "description": "Large modern cultural complex and garden."}, {"id": "ferdows", "name_fa": "باغ فردوس", "name_en": "Ferdows Garden", "lat": 35.799, "lng": 51.439, "neighborhood": "Shemiran", "categories": ["historic", "museum", "park"], "styles": ["arch", "portrait"], "description": "Qajar-era garden and pavilion, home to the Cinema Museum."}, {"id": "tajrish", "name_fa": "بازار تجریش", "name_en": "Tajrish Bazaar", "lat": 35.8045, "lng": 51.433, "neighborhood": "Tajrish", "categories": ["market", "street"], "styles": ["street", "portrait"], "description": "Lively traditional bazaar beside Imamzadeh Saleh."}];
-'use strict';
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const CAT={park:'پارک و باغ',historic:'معماری تاریخی',museum:'موزه',street:'خیابان و کوچه',modern:'معماری مدرن',view:'چشم‌انداز',market:'بازار'};
-const STY={portrait:'پرتره',street:'عکاسی خیابانی',night:'شب',landscape:'منظره',arch:'معماری'};
-const TIPS={park:['نور نرم صبح یا ۱ ساعت مانده به غروب؛ سایهٔ درختان را برای پرتره بسنجید.','لنز ۵۰–۸۵ میلی‌متر برای پرتره، ۲۴–۳۵ برای منظره.'],historic:['نور جانبی جزئیات کاشی و آجر را برجسته می‌کند؛ ظهر سایه‌های تند می‌سازد.','لنز واید ۱۶–۲۴ برای فضاهای بسته؛ خطوط عمودی را صاف نگه دارید.'],museum:['فضای داخلی معمولاً کم‌نور است؛ ISO بالاتر و دیافراگم باز. سه‌پایه و فلاش اغلب ممنوع است.','لنز ۳۵ یا ۵۰ با دیافراگم باز.'],street:['نور غروب و ساعت آبی برای حال‌وهوای شهری.','لنز ۲۸–۳۵؛ فاصلهٔ کانونی ثابت (زون فوکوس) سرعت می‌دهد.'],modern:['ساعت آبی و شب برای نورپردازی سازه؛ سه‌پایه کمک می‌کند.','لنز واید و ایستادن در زاویه‌های قطری.'],view:['غروب و ساعت آبی؛ هوای پس از باران دید را بهتر می‌کند.','لنز ۷۰–۲۰۰ برای فشرده‌کردن لایه‌های شهر.'],market:['نور داخل بازار کم و مختلط است؛ ISO بالاتر.','پیش از عکاسی از افراد اجازه بگیرید.']};
-const PERM='قوانین عکاسی تأیید نشده است';
-let L_=[],map,cluster,markers={},sel=new Set(),fav=new Set(JSON.parse(localStorage.getItem('fav')||'[]')),showFav=false,user=null;
-const note=(t)=>{const n=$('#notice');n.textContent=t;n.hidden=!t;if(t)setTimeout(()=>n.hidden=true,6000)};
-const rad=Math.PI/180,tehran=[35.7,51.39];
-function dist(a,b){const dx=(a[1]-b[1])*Math.cos(a[0]*rad),dy=a[0]-b[0];return Math.hypot(dx,dy)*111}
-function sun(lat,lng,d=new Date()){const y=d.getFullYear(),n=Math.floor((Date.UTC(y,d.getMonth(),d.getDate())-Date.UTC(y,0,0))/864e5),B=rad*360/365*(n-81),dec=Math.asin(Math.sin(rad*23.44)*Math.sin(B)),eot=9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B),ha=Math.acos(-Math.tan(lat*rad)*Math.tan(dec))/rad/15,noon=12-lng/15-eot/60,base=Date.UTC(y,d.getMonth(),d.getDate()),t=h=>new Date(base+h*36e5),az=Math.acos(Math.sin(dec)/Math.cos(lat*rad))/rad;return{rise:t(noon-ha),set:t(noon+ha),az}}
-const fmt=d=>d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Tehran'});
-const add=(d,m)=>new Date(d.getTime()+m*6e4);
-function matches(l){const q=$('#q').value.trim().toLowerCase();if(showFav&&!fav.has(l.id))return false;
- if(sel.size&&![...sel].every(k=>l.categories.includes(k)||l.styles.includes(k)))return false;
- return !q||[l.name_fa,l.name_en,l.neighborhood,...l.categories.map(c=>CAT[c]),...l.styles.map(s=>STY[s])].join(' ').toLowerCase().includes(q)}
-function render(){cluster.clearLayers();const r=L_.filter(matches);r.forEach(l=>cluster.addLayer(markers[l.id]));
- if(!r.length)note('نتیجه‌ای پیدا نشد. فیلترها را پاک کنید.');return r}
-function chips(){const el=$('#chips');el.innerHTML='';
- const mk=(k,t)=>{const b=document.createElement('button');b.className='chip';b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>{sel.has(k)?sel.delete(k):sel.add(k);b.classList.toggle('on');b.setAttribute('aria-pressed',sel.has(k));render()};el.append(b)};
- Object.entries(CAT).forEach(([k,v])=>mk(k,v));Object.entries(STY).forEach(([k,v])=>mk(k,v));
- const c=document.createElement('button');c.className='chip';c.textContent='پاک کردن فیلترها';c.onclick=()=>{sel.clear();$('#q').value='';showFav=false;$('#favs').classList.remove('on');chips();render()};el.append(c)}
-function open(l){const s=sun(l.lat,l.lng),p=$('#panel');
- const list=a=>'<ul>'+a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ul>';
- const tips=l.categories.flatMap(c=>TIPS[c]||[]);
- $('#pbody').innerHTML=`<h2>${esc(l.name_fa)}</h2><p class="en">${esc(l.name_en)}</p>
- <div class="hero">تصویر تأییدشده‌ای موجود نیست</div>
- <span class="status"><b>وضعیت عکاسی:</b> ${PERM}. پیش از رفتن با مجموعه تماس بگیرید.</span>
- <p>${esc(l.description)}</p><p>${esc(l.neighborhood)} · ${l.lat.toFixed(4)}, ${l.lng.toFixed(4)}<br><small>مختصات تقریبی است؛ روی نقشه بررسی کنید.</small></p>
- <div>${l.categories.map(c=>CAT[c]).concat(l.styles.map(c=>STY[c])).map(esc).join('، ')}</div>
- <div class="row"><a href="https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}" target="_blank" rel="noopener">مسیریابی</a><button id="fv">${fav.has(l.id)?'حذف از ذخیره‌ها':'ذخیره'}</button></div>
- <h3>نور و زمان</h3><table class="sun"><tr><td>طلوع</td><td>${fmt(s.rise)}</td></tr><tr><td>غروب</td><td>${fmt(s.set)}</td></tr><tr><td>ساعت طلایی (تقریبی)</td><td>${fmt(add(s.set,-60))}–${fmt(s.set)}</td></tr><tr><td>ساعت آبی (تقریبی)</td><td>${fmt(s.set)}–${fmt(add(s.set,30))}</td></tr><tr><td>جهت غروب</td><td>${(360-s.az).toFixed(0)}° از شمال</td></tr></table><small>محاسبهٔ نجومی تقریبی برای امروز، نه وضعیت زندهٔ هوا.</small>
- <div id="wx"><small>در حال دریافت وضعیت هوا…</small></div>
- <h3>راهنمای عمومی (نه مختص این مکان)</h3>${list([...new Set(tips)])}
- <h3>اطلاعات عملی</h3><ul><li>ورودی: بررسی نشده</li><li>ساعات بازدید: بررسی نشده</li><li>تردد با سه‌پایه، فلاش و عکاسی تجاری: با مجموعه هماهنگ کنید</li><li>آخرین تأیید: ندارد · منبع رسمی: ندارد</li></ul>`;
- p.classList.add('open');p.classList.remove('peek');$('#fv').onclick=()=>{fav.has(l.id)?fav.delete(l.id):fav.add(l.id);localStorage.setItem('fav',JSON.stringify([...fav]));open(l)};
- history.replaceState(null,'','#'+l.id);map.flyTo([l.lat,l.lng],15);
- fetch(`https://api.open-meteo.com/v1/forecast?latitude=${l.lat}&longitude=${l.lng}&current=cloud_cover,wind_speed_10m,precipitation&daily=precipitation_probability_max&timezone=Asia%2FTehran`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(w=>{$('#wx').innerHTML=`<h3>هوای زنده (Open-Meteo)</h3><ul><li>ابر: ${w.current.cloud_cover}٪</li><li>باد: ${w.current.wind_speed_10m} km/h</li><li>احتمال بارش امروز: ${w.daily.precipitation_probability_max[0]}٪</li></ul>`}).catch(()=>{$('#wx').innerHTML='<small>وضعیت زندهٔ هوا در دسترس نیست (اتصال برقرار نیست).</small>'})}
-function planner(){$('#pbody').innerHTML=`<h2>دستیار برنامه‌ریزی</h2><label>سبک عکاسی<select id="ps">${Object.entries(STY).map(([k,v])=>`<option value="${k}">${v}</option>`)}</select></label><label>فضا<select id="pi"><option value="">هر دو</option><option value="in">سرپوشیده</option><option value="out">فضای باز</option></select></label><button id="go" style="width:100%">پیشنهاد بده</button><div id="res"></div><small>امتیازها نظر کاربران نیستند؛ فقط تطابق سبک/دسته با دادهٔ ویراستاری‌اند.</small>`;
- $('#panel').classList.add('open');$('#go').onclick=()=>{const s=$('#ps').value,i=$('#pi').value;const ind=l=>l.categories.some(c=>c==='museum'||c==='market');
-  const r=L_.filter(l=>l.styles.includes(s)&&(!i||(i==='in')===ind(l))).sort((a,b)=>(user?dist(user,[a.lat,a.lng])-dist(user,[b.lat,b.lng]):0));
-  $('#res').innerHTML=r.length?'<ul>'+r.map(l=>`<li><a href="#${l.id}" data-id="${l.id}">${esc(l.name_fa)}</a> — سبک «${STY[s]}» در دادهٔ این مکان ثبت شده است.</li>`).join('')+'</ul>':'<p>مکانی مطابق این ترجیح‌ها نیست.</p>';
-  $('#res').querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();open(L_.find(l=>l.id===a.dataset.id))})}}
-async function init(){map=L.map('map',{zoomControl:true}).setView(tehran,11);
- const t=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);let err=0;t.on('tileerror',()=>{if(++err===3)note('کاشی‌های نقشه بارگذاری نمی‌شوند. اتصال اینترنت را بررسی کنید.')});
- cluster=L.markerClusterGroup().addTo(map);
- L_=DATA;
- L_.forEach(l=>{const m=L.marker([l.lat,l.lng],{title:l.name_en,icon:L.divIcon({className:'',html:'<div class="dot"></div>',iconSize:[16,16]})});m.on('click',()=>open(l));markers[l.id]=m});
- chips();render();const h=L_.find(l=>'#'+l.id===location.hash);if(h)open(h)}
-$('#q').oninput=render;$('#home').onclick=()=>map.flyTo(tehran,11);
-$('#favs').onclick=e=>{showFav=!showFav;e.target.classList.toggle('on',showFav);e.target.setAttribute('aria-pressed',showFav);render()};
-$('#loc').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{user=[p.coords.latitude,p.coords.longitude];L.circleMarker(user,{radius:7}).addTo(map);map.flyTo(user,14)},()=>note('دسترسی به موقعیت داده نشد.')):note('مرورگر از موقعیت‌یابی پشتیبانی نمی‌کند.');
-$('#plan').onclick=planner;
-$('#grip').onclick=()=>$('#panel').classList.toggle('peek');
-addEventListener('keydown',e=>{if(e.key==='Escape')$('#panel').classList.remove('open')});
-init();
+:root {
+  --bg: #121212;
+  --surface: #1c1c1c;
+  --surface-2: #242424;
+  --border: #2e2e2e;
+  --text: #f2f0eb;
+  --text-muted: #a39e94;
+  --amber: #c4a574;
+  --amber-dim: #8a7350;
+  --amber-soft: rgba(196, 165, 116, 0.15);
+  --success: #6b9b7a;
+  --warning: #c4a050;
+  --danger: #b07070;
+  --info: #6a8aaa;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --font: "Vazirmatn", system-ui, -apple-system, sans-serif;
+  --header-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --transition: 0.22s ease;
+}
 
-</script></body></html>
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[dir="ltr"] {
+  font-family: var(--font);
+}
+
+#app {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--header-h);
+  padding: 8px 12px;
+  pointer-events: none;
+}
+
+.top-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 720px;
+  margin: 0 auto;
+  pointer-events: auto;
+  background: rgba(28, 28, 28, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px 8px;
+  box-shadow: var(--shadow);
+}
+
+.search-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+[dir="ltr"] .search-icon {
+  right: auto;
+  left: 10px;
+}
+
+#search-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 8px 36px 8px 32px;
+}
+
+[dir="ltr"] #search-input {
+  padding: 8px 32px 8px 36px;
+}
+
+#search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.clear-search {
+  position: absolute;
+  left: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+[dir="ltr"] .clear-search {
+  left: auto;
+  right: 8px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  background: var(--surface-2);
+  outline: none;
+}
+
+.lang-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Map ---------- */
+.map-container {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+}
+
+.map-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--bg);
+  z-index: 500;
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+}
+
+.map-error button {
+  padding: 10px 20px;
+  background: var(--amber);
+  color: #1a1a1a;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: calc(24px + var(--safe-bottom));
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 900;
+}
+
+[dir="ltr"] .map-controls {
+  left: auto;
+  right: 16px;
+}
+
+.ctrl-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 28, 28, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.ctrl-btn:hover,
+.ctrl-btn:focus-visible {
+  background: var(--surface-2);
+  border-color: var(--amber-dim);
+  outline: none;
+}
+
+.ctrl-btn .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--amber);
+  color: #1a1a1a;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Leaflet dark tweaks */
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(28, 28, 28, 0.92) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 16px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--surface-2) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(18, 18, 18, 0.75) !important;
+  color: var(--text-muted) !important;
+  font-size: 10px !important;
+  max-width: 50%;
+}
+
+.leaflet-control-attribution a {
+  color: var(--amber-dim) !important;
+}
+
+/* Custom markers */
+.photo-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.photo-marker:hover {
+  transform: scale(1.12);
+}
+
+.photo-marker svg {
+  width: 16px;
+  height: 16px;
+  color: var(--amber);
+}
+
+.marker-cluster-custom {
+  background: rgba(196, 165, 116, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-cluster-custom div {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+}
+
+/* ---------- Panels common ---------- */
+.filters-panel,
+.detail-panel,
+.side-menu {
+  position: absolute;
+  z-index: 1100;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.panel-header h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.panel-footer {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Filters */
+.filters-panel {
+  top: 0;
+  bottom: 0;
+  width: min(340px, 92vw);
+  right: 0;
+  transform: translateX(105%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+[dir="ltr"] .filters-panel {
+  right: auto;
+  left: 0;
+  transform: translateX(-105%);
+}
+
+.filters-panel.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.filters-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-group h3 {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: var(--amber-dim);
+}
+
+.chip.active {
+  background: var(--amber-soft);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+/* Side menu */
+.side-menu {
+  top: 0;
+  bottom: 0;
+  width: min(300px, 88vw);
+  right: 0;
+  transform: translateX(105%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+[dir="ltr"] .side-menu {
+  right: auto;
+  left: 0;
+  transform: translateX(-105%);
+}
+
+.side-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.menu-nav {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: right;
+  transition: background var(--transition);
+}
+
+[dir="ltr"] .menu-item {
+  text-align: left;
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: var(--surface-2);
+  outline: none;
+}
+
+.menu-item svg {
+  flex-shrink: 0;
+  color: var(--amber);
+}
+
+/* Detail panel */
+.detail-panel {
+  top: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  left: 0;
+  transform: translateX(-105%);
+  opacity: 0;
+  pointer-events: none;
+  border-right: 1px solid var(--border);
+}
+
+[dir="ltr"] .detail-panel {
+  left: auto;
+  right: 0;
+  transform: translateX(105%);
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+.detail-panel.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.detail-handle {
+  display: none;
+}
+
+.detail-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Detail content styles */
+.detail-hero {
+  position: relative;
+  height: 180px;
+  background: linear-gradient(145deg, #2a2520 0%, #1a1815 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.detail-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(18, 18, 18, 0.85) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.detail-hero-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.detail-hero h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.detail-hero .name-en {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.permission-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.permission-badge.permitted {
+  background: rgba(107, 155, 122, 0.2);
+  color: var(--success);
+}
+
+.permission-badge.restricted {
+  background: rgba(196, 160, 80, 0.2);
+  color: var(--warning);
+}
+
+.permission-badge.unknown {
+  background: rgba(106, 138, 170, 0.2);
+  color: var(--info);
+}
+
+.detail-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-section:last-child {
+  border-bottom: none;
+}
+
+.detail-section h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--amber);
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+
+.detail-section p,
+.detail-section li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.detail-section .muted,
+.muted {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.meta-row strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-item .label {
+  flex: 0 0 90px;
+  font-size: 0.85rem;
+}
+
+.score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.score-item .num {
+  flex: 0 0 24px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--amber);
+  text-align: left;
+}
+
+[dir="ltr"] .score-item .num {
+  text-align: right;
+}
+
+.restriction-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.restriction-item {
+  display: flex;
+  gap: 8px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.restriction-item .key {
+  flex: 0 0 100px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 20px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-text {
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  padding: 10px 18px;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: #1a1a1a;
+}
+
+.btn-primary:hover {
+  background: #d4b584;
+}
+
+.btn-primary.full {
+  width: 100%;
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--amber-dim);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--text-muted);
+  padding: 10px 12px;
+}
+
+.btn-text:hover {
+  color: var(--text);
+}
+
+.btn-fav.active {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  padding: 3px 10px;
+  background: var(--surface-2);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ---------- Modals ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+
+.modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(30px);
+  transition: transform var(--transition);
+  overflow: hidden;
+}
+
+.modal.open .modal-card {
+  transform: translateY(0);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.field select {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a39e94' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 12px center;
+  padding-left: 32px;
+}
+
+[dir="ltr"] .field select {
+  background-position: right 12px center;
+  padding-left: 12px;
+  padding-right: 32px;
+}
+
+.field select:focus {
+  border-color: var(--amber-dim);
+}
+
+.field.checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.field.checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--amber);
+}
+
+.assistant-results {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.result-card {
+  padding: 12px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color var(--transition);
+}
+
+.result-card:hover {
+  border-color: var(--amber-dim);
+}
+
+.result-card h4 {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.result-card p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.list-item:hover h4 {
+  color: var(--amber);
+}
+
+.list-item h4 {
+  font-size: 0.95rem;
+  transition: color var(--transition);
+}
+
+.list-item .sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.about-body p {
+  margin-bottom: 12px;
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 768px) {
+  .modal {
+    align-items: center;
+  }
+
+  .modal-card {
+    border-radius: 14px;
+    max-height: 80vh;
+  }
+
+  .detail-panel {
+    top: calc(var(--header-h) + 12px);
+    bottom: 16px;
+    left: 16px;
+    width: 400px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  [dir="ltr"] .detail-panel {
+    left: auto;
+    right: 16px;
+  }
+
+  .filters-panel,
+  .side-menu {
+    top: calc(var(--header-h) + 12px);
+    bottom: 16px;
+    border-radius: 14px;
+  }
+
+  .map-controls {
+    bottom: 24px;
+  }
+}
+
+/* ---------- Mobile bottom sheet for detail ---------- */
+@media (max-width: 767px) {
+  .detail-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 70vh;
+    max-height: 85vh;
+    transform: translateY(105%);
+    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  [dir="ltr"] .detail-panel {
+    transform: translateY(105%);
+  }
+
+  .detail-panel.open {
+    transform: translateY(0);
+  }
+
+  .detail-handle {
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+
+  .map-controls {
+    bottom: calc(16px + var(--safe-bottom));
+  }
+}
+
+/* Scrollbar */
+.detail-scroll::-webkit-scrollbar,
+.filters-body::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.detail-scroll::-webkit-scrollbar-thumb,
+.filters-body::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Top bar -->
+    <header class="top-bar" role="banner">
+      <div class="top-bar-inner">
+        <button type="button" class="icon-btn" id="btn-menu" aria-label="منو" title="منو">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="search-wrap">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" id="search-input" placeholder="جستجوی مکان، محله یا سبک عکاسی…" autocomplete="off" aria-label="جستجو">
+          <button type="button" class="clear-search" id="clear-search" aria-label="پاک کردن" hidden>×</button>
+        </div>
+        <button type="button" class="icon-btn" id="btn-lang" aria-label="English" title="Switch language">
+          <span class="lang-label">EN</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Map -->
+    <main class="map-container" role="main">
+      <div id="map" aria-label="نقشه تعاملی تهران"></div>
+      <div id="map-error" class="map-error" hidden>
+        <p>بارگذاری نقشه ممکن نیست. اتصال اینترنت را بررسی کنید.</p>
+        <button type="button" id="retry-map">تلاش مجدد</button>
+      </div>
+
+      <!-- Floating controls -->
+      <div class="map-controls">
+        <button type="button" class="ctrl-btn" id="btn-locate" aria-label="موقعیت من" title="موقعیت من">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        </button>
+        <button type="button" class="ctrl-btn" id="btn-overview" aria-label="نمای کلی تهران" title="نمای کلی تهران">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/><path d="M12 7v5l3 3"/></svg>
+        </button>
+        <button type="button" class="ctrl-btn" id="btn-filters" aria-label="فیلترها" title="فیلتر دسته‌ها">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          <span class="badge" id="filter-badge" hidden>0</span>
+        </button>
+      </div>
+    </main>
+
+    <!-- Category filters panel -->
+    <aside class="filters-panel" id="filters-panel" aria-hidden="true">
+      <div class="panel-header">
+        <h2>فیلتر دسته‌ها</h2>
+        <button type="button" class="icon-btn" id="close-filters" aria-label="بستن">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="filters-body">
+        <div class="filter-group">
+          <h3>مکان</h3>
+          <div class="chip-list" id="place-filters"></div>
+        </div>
+        <div class="filter-group">
+          <h3>سبک عکاسی</h3>
+          <div class="chip-list" id="style-filters"></div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button type="button" class="btn-text" id="clear-filters">پاک کردن همه</button>
+        <button type="button" class="btn-primary" id="apply-filters">اعمال</button>
+      </div>
+    </aside>
+
+    <!-- Side drawer / bottom sheet for location detail -->
+    <aside class="detail-panel" id="detail-panel" aria-hidden="true">
+      <div class="detail-handle" id="detail-handle" aria-hidden="true"></div>
+      <div class="detail-scroll" id="detail-content">
+        <!-- Filled by JS -->
+      </div>
+    </aside>
+
+    <!-- Side menu -->
+    <aside class="side-menu" id="side-menu" aria-hidden="true">
+      <div class="panel-header">
+        <h2>منو</h2>
+        <button type="button" class="icon-btn" id="close-menu" aria-label="بستن">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <nav class="menu-nav">
+        <button type="button" class="menu-item" data-action="assistant">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M6 10h12v8a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4v-8z"/></svg>
+          <span>دستیار برنامه‌ریزی عکاسی</span>
+        </button>
+        <button type="button" class="menu-item" data-action="favorites">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 21s-7-4.5-7-10a4.5 4.5 0 0 1 8.1-2.7A4.5 4.5 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>
+          <span>علاقه‌مندی‌ها</span>
+        </button>
+        <button type="button" class="menu-item" data-action="recent">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <span>بازدیدهای اخیر</span>
+        </button>
+        <button type="button" class="menu-item" data-action="about">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span>درباره و منابع</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Assistant modal -->
+    <div class="modal" id="assistant-modal" aria-hidden="true" role="dialog" aria-labelledby="assistant-title">
+      <div class="modal-backdrop" data-close="assistant"></div>
+      <div class="modal-card">
+        <div class="panel-header">
+          <h2 id="assistant-title">دستیار برنامه‌ریزی عکاسی</h2>
+          <button type="button" class="icon-btn" data-close="assistant" aria-label="بستن">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="assistant-form">
+            <label class="field">
+              <span>سبک عکاسی</span>
+              <select id="asst-style">
+                <option value="">همه</option>
+                <option value="architectural">معماری</option>
+                <option value="portrait">پرتره</option>
+                <option value="street">خیابانی</option>
+                <option value="landscape">منظره</option>
+                <option value="night">شب</option>
+                <option value="cinematic">سینمایی</option>
+                <option value="historical">تاریخی</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>زمان روز</span>
+              <select id="asst-time">
+                <option value="">هر زمان</option>
+                <option value="morning">صبح</option>
+                <option value="golden">ساعت طلایی</option>
+                <option value="afternoon">بعدازظهر</option>
+                <option value="blue">ساعت آبی</option>
+                <option value="night">شب</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>نوع دوربین</span>
+              <select id="asst-camera">
+                <option value="">فرقی ندارد</option>
+                <option value="phone">موبایل</option>
+                <option value="camera">دوربین اختصاصی</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>فضا</span>
+              <select id="asst-space">
+                <option value="">هر دو</option>
+                <option value="outdoor">فضای باز</option>
+                <option value="indoor">فضای بسته</option>
+              </select>
+            </label>
+            <label class="field checkbox">
+              <input type="checkbox" id="asst-free">
+              <span>فقط مکان‌های رایگان (در صورت تأیید)</span>
+            </label>
+            <button type="submit" class="btn-primary full">پیشنهاد مکان</button>
+          </form>
+          <div id="assistant-results" class="assistant-results" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- List panel for favorites / recent -->
+    <div class="modal" id="list-modal" aria-hidden="true" role="dialog">
+      <div class="modal-backdrop" data-close="list"></div>
+      <div class="modal-card">
+        <div class="panel-header">
+          <h2 id="list-title">لیست</h2>
+          <button type="button" class="icon-btn" data-close="list" aria-label="بستن">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="modal-body" id="list-content"></div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="modal" id="about-modal" aria-hidden="true" role="dialog">
+      <div class="modal-backdrop" data-close="about"></div>
+      <div class="modal-card">
+        <div class="panel-header">
+          <h2>درباره و منابع</h2>
+          <button type="button" class="icon-btn" data-close="about" aria-label="بستن">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="modal-body about-body">
+          <p>این ابزار برای کمک به عکاسان در کشف مکان‌های مناسب عکاسی در تهران طراحی شده است. اطلاعات مجوزها، ساعات و هزینه‌ها ممکن است تغییر کند؛ همیشه پیش از مراجعه منابع رسمی را بررسی کنید.</p>
+          <p>نقشه با OpenStreetMap و Leaflet ارائه می‌شود. داده‌های مکان از منابع عمومی گردآوری شده و وضعیت مجوزها با احتیاط و شفافیت ثبت شده‌اند.</p>
+          <p class="muted">هیچ نام تجاری یا لوگویی به این پروژه اختصاص داده نشده است.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" hidden></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script>
+window.__LOCATIONS__ = [{"id": "tabiat-bridge", "name_fa": "پل طبیعت", "name_en": "Tabiat Bridge", "latitude": 35.7544, "longitude": 51.4204, "address": "بزرگراه مدرس، بین پارک آب‌وآتش و پارک طالقانی", "neighborhood": "عباس‌آباد", "categories": ["bridges-modern", "urban-viewpoints", "architectural", "night", "portrait", "street"], "description": "پل عابر پیاده چندسطحی طراحی‌شده توسط لیلا عراقیان که دو پارک آب‌وآتش و طالقانی را به هم متصل می‌کند. خطوط منحنی فولادی و چشم‌انداز شهری و کوهستانی آن را به یکی از محبوب‌ترین مکان‌های عکاسی تهران تبدیل کرده است.", "image_urls": [], "photography_styles": ["architectural", "urban", "portrait", "night", "cinematic", "mobile"], "suitability_scores": {"architectural": 9, "portrait": 8, "night": 9, "street": 7, "landscape": 6, "cinematic": 8}, "lighting_tips": "بهترین نور در ساعت طلایی عصر و آبی‌ساعت پس از غروب. نورپردازی شبانه پل جلوه‌های رنگی ایجاد می‌کند. از نور جانبی برای تأکید بر خطوط سازه استفاده کنید.", "composition_tips": "از خطوط منحنی پل برای هدایت چشم استفاده کنید. عکس‌های از پایین به بالا قدرت سازه را نشان می‌دهند. در سطح میانی برای پرتره با پس‌زمینه شهری کادر بگیرید.", "equipment_recommendations": "لنز واید ۲۴–۳۵mm برای معماری، ۵۰–۸۵mm برای پرتره. سه‌پایه برای لانگ‌اکسپوژر شبانه مفید است اما ممکن است محدودیت داشته باشد. موبایل با حالت شب عملکرد خوبی دارد.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی شخصی معمولاً آزاد است.", "commercial": "برای عکاسی تجاری و فیلم‌برداری حرفه‌ای ممکن است نیاز به هماهنگی باشد.", "tripod": "استفاده از سه‌پایه ممکن است محدود باشد؛ از مسئولان محلی بپرسید.", "flash": "فلاش در فضای عمومی معمولاً مشکلی ندارد.", "drone": "پرواز پهپاد بدون مجوز ممنوع است.", "professional": "تجهیزات حرفه‌ای بزرگ ممکن است توجه جلب کند؛ احتیاط توصیه می‌شود."}, "entrance_fee": "رایگان", "opening_hours": "تقریباً ۶:۱۵ تا ۰۰:۳۰ (ممکن است تغییر کند)", "accessibility": "دسترسی از طریق پارک آب‌وآتش یا پارک طالقانی. رمپ و پله وجود دارد.", "official_source_url": "http://www.tabiatbridge.com/", "last_verified": "2025-01"}, {"id": "ab-o-atash", "name_fa": "پارک آب و آتش", "name_en": "Ab-o-Atash Park", "latitude": 35.7541, "longitude": 51.4183, "address": "خیابان آفریقا، خیابان ژوبین، عباس‌آباد", "neighborhood": "عباس‌آباد", "categories": ["parks-gardens", "modern-architecture", "night", "portrait", "urban-viewpoints"], "description": "پارک مدرن با فواره‌های موزیکال، برج‌های آتش و مجسمه‌های مفهومی. فضای باز و طراحی معاصر آن را برای عکاسی شهری و پرتره مناسب کرده است.", "image_urls": [], "photography_styles": ["portrait", "urban", "night", "architectural", "mobile"], "suitability_scores": {"portrait": 8, "night": 9, "architectural": 7, "street": 6, "landscape": 5}, "lighting_tips": "عصر و شب با نور فواره‌ها و آتش بهترین زمان است. نور صبحگاهی نرم برای پرتره مناسب است.", "composition_tips": "از خطوط فواره‌ها و مجسمه‌ها برای کادر استفاده کنید. انعکاس در آب و پس‌زمینه شهری جذاب است.", "equipment_recommendations": "لنز استاندارد یا تله کوتاه برای پرتره. موبایل برای ثبت لحظات شبانه کافی است.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی در فضای عمومی آزاد است.", "commercial": "برای پروژه‌های تجاری هماهنگی توصیه می‌شود.", "tripod": "در فضای باز معمولاً مشکلی ندارد مگر ایجاد مزاحمت.", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "تجهیزات بزرگ ممکن است نیاز به هماهنگی داشته باشد."}, "entrance_fee": "رایگان", "opening_hours": "معمولاً ۲۴ ساعته یا ساعات طولانی", "accessibility": "دسترسی مناسب از خیابان‌های اطراف و مترو حقانی", "official_source_url": null, "last_verified": "2025-01"}, {"id": "golestan-palace", "name_fa": "کاخ گلستان", "name_en": "Golestan Palace", "latitude": 35.6797, "longitude": 51.4203, "address": "خیابان پانزده خرداد، میدان ارگ", "neighborhood": "بازار / ارگ", "categories": ["historical-architecture", "museums-cultural", "architectural", "portrait"], "description": "مجموعه کاخ قاجاری و میراث جهانی یونسکو با تالارهای آینه‌کاری، تخت مرمر و باغ مرکزی. یکی از مهم‌ترین مکان‌های عکاسی معماری تاریخی تهران.", "image_urls": [], "photography_styles": ["architectural", "historical", "portrait", "cinematic"], "suitability_scores": {"architectural": 10, "historical": 10, "portrait": 7, "cinematic": 8, "landscape": 4}, "lighting_tips": "صبح زود برای نور نرم در باغ و تالارها. نور بعدازظهر برای آینه‌کاری‌ها. از فلاش در فضاهای داخلی خودداری کنید.", "composition_tips": "کادر متقارن از تخت مرمر و ایوان. جزئیات کاشی و آینه. انعکاس در حوض باغ.", "equipment_recommendations": "لنز واید و استاندارد. سه‌پایه معمولاً ممنوع. موبایل بدون فلاش مناسب است.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی بدون فلاش در بسیاری از فضاهای باز و برخی داخلی مجاز است. در برخی تالارها محدودیت وجود دارد.", "commercial": "عکاسی و فیلم‌برداری حرفه‌ای نیاز به مجوز از اداره کل موزه‌ها دارد.", "tripod": "معمولاً ممنوع", "flash": "ممنوع در فضاهای داخلی برای حفاظت از آثار", "drone": "ممنوع", "professional": "مجوز قبلی الزامی است"}, "entrance_fee": "بلیت ورودی جداگانه برای بخش‌های مختلف؛ قیمت‌ها متغیر است", "opening_hours": "معمولاً ۹ تا ۱۶ یا ۱۷ (بسته به فصل و روز؛ دوشنبه‌ها ممکن است تعطیل باشد)", "accessibility": "دسترسی از مترو امام خمینی. مسیرهای پیاده روی سنگفرش.", "official_source_url": "https://golestanpalace.ir", "last_verified": "2025-01"}, {"id": "azadi-tower", "name_fa": "برج آزادی", "name_en": "Azadi Tower", "latitude": 35.6994, "longitude": 51.3378, "address": "میدان آزادی", "neighborhood": "آزادی", "categories": ["historical-architecture", "architectural", "urban-viewpoints", "night", "landscape"], "description": "نماد کلاسیک تهران با معماری تلفیقی ایرانی. مناسب عکاسی معماری، شهری و لانگ‌اکسپوژر شبانه.", "image_urls": [], "photography_styles": ["architectural", "urban", "night", "landscape", "cinematic"], "suitability_scores": {"architectural": 10, "night": 9, "urban": 8, "landscape": 7, "portrait": 5}, "lighting_tips": "غروب و شب با نورپردازی برج بهترین زمان است. صبح زود برای آسمان پاک.", "composition_tips": "از فاصله متوسط برای نمایش کامل فرم برج. خطوط میدان را در کادر بگنجانید. لانگ‌اکسپوژر برای حرکت خودروها.", "equipment_recommendations": "واید تا استاندارد. سه‌پایه برای شب. فیلتر ND برای روز.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی شخصی از بیرون معمولاً آزاد است.", "commercial": "ممکن است نیاز به مجوز داشته باشد.", "tripod": "در فضای عمومی میدان معمولاً قابل قبول است مگر ایجاد مزاحمت.", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "هماهنگی توصیه می‌شود"}, "entrance_fee": "بازدید از بیرون رایگان؛ موزه زیرزمینی بلیت جداگانه دارد", "opening_hours": "فضای بیرونی همواره قابل مشاهده است", "accessibility": "دسترسی با مترو و اتوبوس به میدان آزادی", "official_source_url": null, "last_verified": "2025-01"}, {"id": "mellat-park", "name_fa": "پارک ملت", "name_en": "Mellat Park", "latitude": 35.7782, "longitude": 51.4093, "address": "خیابان ولیعصر، تقاطع بزرگراه شهید چمران", "neighborhood": "ونک / ولیعصر", "categories": ["parks-gardens", "landscape", "portrait", "street"], "description": "یکی از بزرگ‌ترین و قدیمی‌ترین پارک‌های تهران با دریاچه مصنوعی، درختان کهنسال و مسیرهای پیاده‌روی. مناسب عکاسی طبیعت شهری و پرتره.", "image_urls": [], "photography_styles": ["landscape", "portrait", "street", "mobile", "cinematic"], "suitability_scores": {"landscape": 8, "portrait": 8, "street": 6, "architectural": 4}, "lighting_tips": "صبح و عصر برای نور نرم زیر درختان. پاییز با برگ‌های رنگی بسیار جذاب است.", "composition_tips": "مسیرهای درخت‌کاری‌شده برای عمق. انعکاس در دریاچه. پرتره با پس‌زمینه سبز.", "equipment_recommendations": "۵۰–۸۵mm برای پرتره، واید برای منظره.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "برای پروژه‌های بزرگ هماهنگی توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد مگر ایجاد مزاحمت"}, "entrance_fee": "رایگان", "opening_hours": "معمولاً از صبح تا شب", "accessibility": "دسترسی خوب از ولیعصر و بزرگراه‌ها", "official_source_url": null, "last_verified": "2025-01"}, {"id": "jamshidieh-park", "name_fa": "پارک جمشیدیه", "name_en": "Jamshidieh Park", "latitude": 35.8268, "longitude": 51.4649, "address": "نیاوران، دامنه کوه کلک‌چال", "neighborhood": "نیاوران", "categories": ["parks-gardens", "landscape", "urban-viewpoints", "portrait"], "description": "باغ سنگی در دامنه البرز با آبشار، حوض و چشم‌انداز شهر. مناسب عکاسی طبیعت و منظره شهری از ارتفاع.", "image_urls": [], "photography_styles": ["landscape", "portrait", "cinematic", "mobile"], "suitability_scores": {"landscape": 9, "portrait": 7, "urban": 6, "architectural": 4}, "lighting_tips": "صبح برای نور نرم روی سنگ‌ها و عصر برای چشم‌انداز شهر. غروب از نقاط مرتفع بسیار زیباست.", "composition_tips": "از پله‌ها و مسیرهای سنگی برای هدایت چشم. چشم‌انداز شهر در پس‌زمینه.", "equipment_recommendations": "واید برای منظره، تله کوتاه برای فشرده‌سازی لایه‌ها.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی برای پروژه‌های بزرگ توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد"}, "entrance_fee": "رایگان", "opening_hours": "تقریباً ۶ تا ۲۴", "accessibility": "دسترسی از نیاوران؛ پیاده‌روی روی سطح شیب‌دار", "official_source_url": null, "last_verified": "2025-01"}, {"id": "national-museum", "name_fa": "موزه ملی ایران", "name_en": "National Museum of Iran", "latitude": 35.6872, "longitude": 51.4165, "address": "خیابان امام خمینی، خیابان سی‌تیر", "neighborhood": "مرکز شهر", "categories": ["museums-cultural", "historical-architecture"], "description": "مهم‌ترین موزه باستان‌شناسی ایران با آثار پیش از تاریخ تا دوره اسلامی. فضای داخلی و نمای ساختمان برای عکاسی فرهنگی مناسب است.", "image_urls": [], "photography_styles": ["architectural", "historical", "mobile"], "suitability_scores": {"architectural": 7, "historical": 9, "portrait": 3}, "lighting_tips": "نور طبیعی داخل سالن‌ها محدود است. از فلاش خودداری کنید.", "composition_tips": "جزئیات آثار و معماری داخلی. نمای بیرونی ساختمان.", "equipment_recommendations": "لنز استاندارد. سه‌پایه و فلاش ممنوع.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی بدون فلاش و بدون تجهیزات حرفه‌ای از اشیای به نمایش گذاشته معمولاً مجاز است مگر تابلوی ممنوع نصب باشد.", "commercial": "عکاسی حرفه‌ای نیاز به مجوز از رئیس موزه و اداره کل دارد.", "tripod": "ممنوع", "flash": "ممنوع", "drone": "ممنوع", "professional": "مجوز قبلی الزامی"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۷ (بررسی آخرین اطلاعات توصیه می‌شود)", "accessibility": "نزدیک مترو و خیابان سی‌تیر", "official_source_url": "https://irannationalmuseum.ir", "last_verified": "2025-01"}, {"id": "si-e-tir", "name_fa": "خیابان سی‌تیر", "name_en": "Si-e Tir Street", "latitude": 35.689, "longitude": 51.4145, "address": "خیابان سی‌تیر، بین امام خمینی و جمهوری", "neighborhood": "مرکز شهر", "categories": ["streets-alleys", "street", "historical-architecture", "portrait"], "description": "خیابان تاریخی با هم‌زیستی ادیان مختلف (مسجد، کلیسا، کنیسه، آتشکده) و موزه‌ها. مناسب عکاسی خیابانی و مستند.", "image_urls": [], "photography_styles": ["street", "documentary", "architectural", "mobile"], "suitability_scores": {"street": 9, "architectural": 7, "portrait": 6, "historical": 8}, "lighting_tips": "نور صبح و عصر برای سایه‌های ملایم. ظهر نور سخت‌تر است.", "composition_tips": "جزئیات معماری مذهبی. زندگی روزمره خیابان. کادرهای مستند.", "equipment_recommendations": "لنز ۳۵–۵۰mm برای خیابانی. موبایل بسیار مناسب است.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی در فضای عمومی آزاد است. از افراد رضایت بگیرید.", "commercial": "هماهنگی برای پروژه‌های بزرگ توصیه می‌شود.", "tripod": "در پیاده‌رو ممکن است مزاحمت ایجاد کند.", "flash": "مجاز اما محترمانه استفاده کنید.", "drone": "بدون مجوز ممنوع", "professional": "احترام به حریم خصوصی و اماکن مذهبی"}, "entrance_fee": "رایگان (فضای عمومی)", "opening_hours": "همیشه قابل دسترسی", "accessibility": "دسترسی آسان با مترو و پیاده", "official_source_url": null, "last_verified": "2025-01"}, {"id": "darband", "name_fa": "دربند", "name_en": "Darband", "latitude": 35.8245, "longitude": 51.424, "address": "انتهای خیابان دربند، شمیران", "neighborhood": "دربند / شمیران", "categories": ["parks-gardens", "landscape", "street", "portrait", "night"], "description": "مسیر کوهستانی و رستوران‌های سنتی در دامنه البرز. مناسب عکاسی طبیعت، خیابانی و شبانه.", "image_urls": [], "photography_styles": ["landscape", "street", "portrait", "night", "cinematic"], "suitability_scores": {"landscape": 8, "street": 7, "portrait": 7, "night": 7}, "lighting_tips": "صبح برای طبیعت و عصر برای فضای رستوران‌ها. شب با نور چراغ‌ها جو خاصی دارد.", "composition_tips": "مسیر رودخانه و پله‌ها. چشم‌انداز کوه. جزئیات زندگی محلی.", "equipment_recommendations": "واید و استاندارد. کفش مناسب پیاده‌روی.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "در مسیرهای شلوغ احتیاط کنید.", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "احترام به حریم خصوصی"}, "entrance_fee": "رایگان", "opening_hours": "معمولاً تا دیروقت", "accessibility": "دسترسی با تاکسی و اتوبوس؛ پیاده‌روی روی سطح شیب‌دار", "official_source_url": null, "last_verified": "2025-01"}, {"id": "chitgar-lake", "name_fa": "دریاچه چیتگر", "name_en": "Chitgar Lake", "latitude": 35.745, "longitude": 51.21, "address": "غرب تهران، مجموعه چیتگر", "neighborhood": "چیتگر", "categories": ["parks-gardens", "landscape", "urban-viewpoints", "portrait"], "description": "دریاچه مصنوعی بزرگ در غرب تهران با مسیرهای پیاده‌روی و چشم‌انداز باز. مناسب عکاسی منظره و غروب.", "image_urls": [], "photography_styles": ["landscape", "portrait", "cinematic", "mobile"], "suitability_scores": {"landscape": 9, "portrait": 7, "urban": 5}, "lighting_tips": "غروب و ساعت طلایی بهترین زمان است. صبح برای آسمان پاک.", "composition_tips": "انعکاس در آب. خطوط افق باز. پرتره با پس‌زمینه دریاچه.", "equipment_recommendations": "واید برای منظره، تله برای فشرده‌سازی.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی برای پروژه‌های بزرگ توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد"}, "entrance_fee": "ورود به محوطه ممکن است هزینه داشته باشد؛ بررسی کنید", "opening_hours": "معمولاً ۸ تا ۲۲", "accessibility": "دسترسی با خودرو و مترو خط ۵", "official_source_url": null, "last_verified": "2025-01"}, {"id": "ferdowsi-garden", "name_fa": "باغ فردوس", "name_en": "Ferdows Garden (Cinema Museum)", "latitude": 35.8045, "longitude": 51.428, "address": "تجریش، خیابان ولیعصر، باغ فردوس", "neighborhood": "تجریش", "categories": ["historical-architecture", "museums-cultural", "parks-gardens", "portrait", "architectural"], "description": "عمارت قاجاری زیبا در باغی سرسبز که اکنون موزه سینما است. پله‌ها، بالکن و نمای سفید عمارت لوکیشن محبوب پرتره و معماری است.", "image_urls": [], "photography_styles": ["architectural", "portrait", "historical", "cinematic"], "suitability_scores": {"architectural": 9, "portrait": 9, "historical": 8, "cinematic": 8}, "lighting_tips": "صبح برای نور نرم روی نمای سفید. عصر برای سایه‌های ملایم.", "composition_tips": "پله‌های ورودی و بالکن. کادر متقارن از نما. پرتره با پس‌زمینه عمارت.", "equipment_recommendations": "۵۰–۸۵mm برای پرتره، واید برای معماری.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی در فضای باغ معمولاً مجاز است. داخل موزه ممکن است محدودیت داشته باشد.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "ممکن است محدود باشد.", "flash": "در داخل احتمالاً ممنوع", "drone": "ممنوع", "professional": "برای پروژه‌های حرفه‌ای مجوز بگیرید"}, "entrance_fee": "بلیت موزه سینما (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۸ (بررسی کنید)", "accessibility": "نزدیک تجریش و ولیعصر", "official_source_url": null, "last_verified": "2025-01"}, {"id": "niavaran-palace", "name_fa": "کاخ نیاوران", "name_en": "Niavaran Palace Complex", "latitude": 35.8115, "longitude": 51.472, "address": "نیاوران، میدان نیاوران", "neighborhood": "نیاوران", "categories": ["historical-architecture", "museums-cultural", "parks-gardens", "architectural"], "description": "مجموعه کاخ‌های پهلوی با باغ‌های وسیع و معماری ترکیبی. مناسب عکاسی معماری تاریخی و منظره باغ.", "image_urls": [], "photography_styles": ["architectural", "historical", "landscape", "portrait"], "suitability_scores": {"architectural": 9, "historical": 9, "landscape": 7, "portrait": 6}, "lighting_tips": "صبح برای نور نرم در باغ. از فلاش در داخل خودداری کنید.", "composition_tips": "نماهای کاخ در میان درختان. جزئیات داخلی. کادر باغ.", "equipment_recommendations": "واید و استاندارد. سه‌پایه معمولاً ممنوع.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی در باغ و برخی فضاها مجاز است. محدودیت‌های داخلی وجود دارد.", "commercial": "مجوز لازم است.", "tripod": "معمولاً ممنوع", "flash": "ممنوع در داخل", "drone": "ممنوع", "professional": "مجوز قبلی الزامی"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۷ (بررسی کنید)", "accessibility": "دسترسی از نیاوران", "official_source_url": null, "last_verified": "2025-01"}, {"id": "saadabad-palace", "name_fa": "کاخ سعدآباد", "name_en": "Sa'dabad Palace Complex", "latitude": 35.819, "longitude": 51.4245, "address": "تجریش، خیابان سعدآباد", "neighborhood": "تجریش / دربند", "categories": ["historical-architecture", "museums-cultural", "parks-gardens", "architectural", "landscape"], "description": "مجموعه وسیع کاخ‌های پهلوی در دامنه البرز با باغ‌های گسترده. مناسب عکاسی معماری و طبیعت.", "image_urls": [], "photography_styles": ["architectural", "historical", "landscape", "portrait"], "suitability_scores": {"architectural": 9, "historical": 9, "landscape": 8, "portrait": 6}, "lighting_tips": "صبح و عصر برای نور نرم. باغ‌ها در بهار و پاییز بسیار زیبا هستند.", "composition_tips": "کاخ در میان درختان. مسیرهای باغ. جزئیات معماری.", "equipment_recommendations": "واید برای معماری و منظره.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی در فضای باز معمولاً مجاز است. داخل کاخ‌ها محدودیت دارد.", "commercial": "مجوز لازم است.", "tripod": "معمولاً ممنوع", "flash": "ممنوع در داخل", "drone": "ممنوع", "professional": "مجوز قبلی الزامی"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۷ (بررسی کنید)", "accessibility": "دسترسی از تجریش؛ محوطه وسیع نیاز به پیاده‌روی دارد", "official_source_url": null, "last_verified": "2025-01"}, {"id": "valiasr-street", "name_fa": "خیابان ولیعصر", "name_en": "Valiasr Street", "latitude": 35.721, "longitude": 51.41, "address": "خیابان ولیعصر (بخش‌های مختلف)", "neighborhood": "ولیعصر", "categories": ["streets-alleys", "street", "portrait", "urban-viewpoints"], "description": "بلندترین خیابان تهران با درختان چنار، پیاده‌روهای عریض و تنوع معماری. مناسب عکاسی خیابانی و شهری.", "image_urls": [], "photography_styles": ["street", "urban", "portrait", "mobile", "cinematic"], "suitability_scores": {"street": 9, "urban": 8, "portrait": 7, "architectural": 6}, "lighting_tips": "نور صبح و عصر زیر درختان چنار. پاییز با برگ‌های زرد بسیار جذاب است.", "composition_tips": "خطوط درختان و پیاده‌رو. جزئیات زندگی شهری. پرتره با پس‌زمینه چنار.", "equipment_recommendations": "۳۵–۵۰mm برای خیابانی.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی در فضای عمومی آزاد است. رضایت افراد را بگیرید.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "در پیاده‌رو احتیاط کنید.", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "احترام به حریم خصوصی"}, "entrance_fee": "رایگان", "opening_hours": "همیشه", "accessibility": "دسترسی عالی با مترو و اتوبوس", "official_source_url": null, "last_verified": "2025-01"}, {"id": "milad-tower", "name_fa": "برج میلاد", "name_en": "Milad Tower", "latitude": 35.7448, "longitude": 51.3755, "address": "بزرگراه همت، مجموعه برج میلاد", "neighborhood": "غرب تهران", "categories": ["modern-architecture", "urban-viewpoints", "architectural", "night"], "description": "بلندترین برج تهران با چشم‌انداز ۳۶۰ درجه از شهر. مناسب عکاسی شهری، معماری مدرن و شبانه.", "image_urls": [], "photography_styles": ["architectural", "urban", "night", "landscape"], "suitability_scores": {"architectural": 9, "urban": 9, "night": 9, "landscape": 7}, "lighting_tips": "غروب و شب با نورپردازی برج. از طبقات بالا برای چشم‌انداز شهر.", "composition_tips": "فرم برج از پایین. چشم‌انداز شهر از بالا. لانگ‌اکسپوژر شبانه.", "equipment_recommendations": "واید برای معماری، تله برای جزئیات شهر.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی شخصی معمولاً مجاز است.", "commercial": "ممکن است نیاز به مجوز داشته باشد.", "tripod": "در برخی فضاها محدود", "flash": "مجاز در فضای باز", "drone": "ممنوع بدون مجوز", "professional": "هماهنگی توصیه می‌شود"}, "entrance_fee": "بلیت بازدید از برج (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۲۳ (بررسی کنید)", "accessibility": "دسترسی با خودرو و حمل‌ونقل عمومی", "official_source_url": null, "last_verified": "2025-01"}, {"id": "laleh-park", "name_fa": "پارک لاله", "name_en": "Laleh Park", "latitude": 35.7085, "longitude": 51.393, "address": "خیابان کارگر شمالی، بین فاطمی و کشاورز", "neighborhood": "مرکز / غرب", "categories": ["parks-gardens", "landscape", "portrait", "street"], "description": "پارک مرکزی با فضای سبز، مجسمه‌ها و نزدیکی به موزه هنرهای معاصر. مناسب عکاسی پرتره و طبیعت شهری.", "image_urls": [], "photography_styles": ["portrait", "landscape", "street", "mobile"], "suitability_scores": {"portrait": 8, "landscape": 7, "street": 6}, "lighting_tips": "صبح و عصر برای نور نرم.", "composition_tips": "مسیرهای سبز و مجسمه‌ها. پرتره با پس‌زمینه طبیعی.", "equipment_recommendations": "۵۰–۸۵mm برای پرتره.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد"}, "entrance_fee": "رایگان", "opening_hours": "معمولاً از صبح تا شب", "accessibility": "دسترسی خوب از خیابان‌های اطراف", "official_source_url": null, "last_verified": "2025-01"}, {"id": "negarestan-garden", "name_fa": "باغ موزه نگارستان", "name_en": "Negarestan Garden Museum", "latitude": 35.6905, "longitude": 51.426, "address": "میدان بهارستان، خیابان دانشسرا", "neighborhood": "بهارستان", "categories": ["historical-architecture", "museums-cultural", "parks-gardens", "portrait"], "description": "باغ و عمارت قاجاری با حوض‌های کاشی‌کاری و فضای آرام. مناسب عکاسی تاریخی و پرتره.", "image_urls": [], "photography_styles": ["architectural", "historical", "portrait", "cinematic"], "suitability_scores": {"architectural": 8, "historical": 9, "portrait": 8, "cinematic": 7}, "lighting_tips": "صبح برای نور نرم در باغ. جزئیات کاشی در نور جانبی.", "composition_tips": "حوض و کاشی‌کاری. نمای عمارت. پرتره با پس‌زمینه تاریخی.", "equipment_recommendations": "واید و استاندارد برای معماری و پرتره.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی در فضای باغ معمولاً مجاز است. داخل ممکن است محدودیت داشته باشد.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "ممکن است محدود باشد.", "flash": "در داخل احتمالاً ممنوع", "drone": "ممنوع", "professional": "برای پروژه‌های حرفه‌ای مجوز بگیرید"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۱۰ تا ۱۸ (دوشنبه‌ها ممکن است تعطیل باشد)", "accessibility": "نزدیک میدان بهارستان", "official_source_url": null, "last_verified": "2025-01"}, {"id": "time-museum", "name_fa": "موزه زمان", "name_en": "Time Museum", "latitude": 35.805, "longitude": 51.418, "address": "زعفرانیه، خیابان فرمانیه", "neighborhood": "زعفرانیه", "categories": ["historical-architecture", "museums-cultural", "architectural", "portrait"], "description": "عمارت زیبای قاجاری با گچ‌بری و آیینه‌کاری که به موزه ساعت تبدیل شده است. لوکیشن محبوب برای عکاسی معماری و پرتره.", "image_urls": [], "photography_styles": ["architectural", "historical", "portrait", "cinematic"], "suitability_scores": {"architectural": 9, "historical": 9, "portrait": 8, "cinematic": 8}, "lighting_tips": "نور طبیعی از پنجره‌ها. صبح برای نور نرم.", "composition_tips": "جزئیات گچ‌بری و آیینه‌کاری. نمای عمارت. پرتره در فضاهای داخلی و خارجی.", "equipment_recommendations": "لنز استاندارد و پرتره. سه‌پایه ممکن است محدود باشد.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی شخصی معمولاً مجاز است. محدودیت‌های داخلی را رعایت کنید.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "ممکن است محدود باشد.", "flash": "در داخل احتمالاً ممنوع", "drone": "ممنوع", "professional": "مجوز برای پروژه‌های حرفه‌ای"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۷ (بررسی کنید)", "accessibility": "دسترسی از زعفرانیه", "official_source_url": null, "last_verified": "2025-01"}, {"id": "artists-park", "name_fa": "پارک هنرمندان", "name_en": "Artists Park (Iran Artists Forum)", "latitude": 35.7055, "longitude": 51.4105, "address": "خیابان ایرانشهر، خیابان استاد شهریار", "neighborhood": "مرکز شهر", "categories": ["parks-gardens", "museums-cultural", "portrait", "street"], "description": "پارک و خانه هنرمندان با مجسمه‌ها، گالری‌ها و فضای فرهنگی. مناسب عکاسی پرتره و فرهنگی.", "image_urls": [], "photography_styles": ["portrait", "street", "architectural", "mobile"], "suitability_scores": {"portrait": 8, "street": 7, "architectural": 6}, "lighting_tips": "صبح و عصر برای نور نرم.", "composition_tips": "مجسمه‌ها و فضای سبز. پرتره با پس‌زمینه هنری.", "equipment_recommendations": "لنز پرتره و استاندارد.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد"}, "entrance_fee": "رایگان (فضای پارک)", "opening_hours": "معمولاً از صبح تا شب", "accessibility": "دسترسی خوب در مرکز شهر", "official_source_url": null, "last_verified": "2025-01"}, {"id": "bam-tehran", "name_fa": "بام تهران", "name_en": "Bam-e Tehran (Tehran Roof)", "latitude": 35.823, "longitude": 51.405, "address": "انتهای ولنجک، ایستگاه تله‌کابین", "neighborhood": "ولنجک", "categories": ["urban-viewpoints", "landscape", "night", "portrait"], "description": "نقطه دید مرتفع در شمال تهران با چشم‌انداز گسترده شهر و کوه‌ها. مناسب عکاسی منظره شهری و شبانه.", "image_urls": [], "photography_styles": ["landscape", "urban", "night", "cinematic"], "suitability_scores": {"landscape": 9, "urban": 9, "night": 9, "portrait": 6}, "lighting_tips": "غروب و شب برای چراغ‌های شهر. صبح برای آسمان پاک و کوه‌ها.", "composition_tips": "چشم‌انداز گسترده شهر. لایه‌های کوه و شهر. لانگ‌اکسپوژر شبانه.", "equipment_recommendations": "واید و تله. سه‌پایه برای شب ضروری است.", "photography_permission_status": "permitted", "restrictions": {"personal": "عکاسی شخصی آزاد است.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "معمولاً مجاز", "flash": "مجاز", "drone": "بدون مجوز ممنوع", "professional": "معمولاً مشکلی ندارد"}, "entrance_fee": "ممکن است هزینه پارکینگ یا تله‌کابین داشته باشد", "opening_hours": "معمولاً تا دیروقت", "accessibility": "دسترسی با خودرو یا تله‌کابین؛ مسیر کوهستانی", "official_source_url": null, "last_verified": "2025-01"}, {"id": "qasr-garden", "name_fa": "باغ موزه قصر", "name_en": "Qasr Garden Museum", "latitude": 35.735, "longitude": 51.445, "address": "خیابان شریعتی، باغ موزه قصر", "neighborhood": "شریعتی", "categories": ["historical-architecture", "museums-cultural", "parks-gardens", "portrait"], "description": "مجتمع فرهنگی در محل زندان سابق با فضای سبز و معماری بازسازی‌شده. مناسب عکاسی فرهنگی و پرتره.", "image_urls": [], "photography_styles": ["architectural", "portrait", "historical", "cinematic"], "suitability_scores": {"architectural": 7, "portrait": 8, "historical": 7, "cinematic": 7}, "lighting_tips": "صبح و عصر برای نور نرم در فضای سبز.", "composition_tips": "فضاهای بازسازی‌شده و مجسمه‌ها. پرتره با پس‌زمینه تاریخی.", "equipment_recommendations": "لنز استاندارد و پرتره.", "photography_permission_status": "permitted_with_restrictions", "restrictions": {"personal": "عکاسی شخصی معمولاً مجاز است.", "commercial": "هماهنگی توصیه می‌شود.", "tripod": "ممکن است محدود باشد.", "flash": "در داخل ممکن است محدود باشد", "drone": "ممنوع", "professional": "مجوز برای پروژه‌های حرفه‌ای"}, "entrance_fee": "بلیت ورودی (قیمت متغیر)", "opening_hours": "معمولاً ۹ تا ۱۸ (بررسی کنید)", "accessibility": "دسترسی از شریعتی", "official_source_url": null, "last_verified": "2025-01"}];
+  </script>
+  <script>
+/**
+ * Photography Discovery Map — Tehran
+ * Interactive map for photographers. No brand identity.
+ */
+
+(function () {
+  "use strict";
+
+  // ---------- Constants ----------
+  const TEHRAN_CENTER = [35.6892, 51.3890];
+  const TEHRAN_ZOOM = 12;
+  const STORAGE_FAV = "photo-map-favs";
+  const STORAGE_RECENT = "photo-map-recent";
+  const STORAGE_LANG = "photo-map-lang";
+
+  const PLACE_CATEGORIES = [
+    { id: "parks-gardens", fa: "پارک و باغ", en: "Parks & Gardens" },
+    { id: "historical-architecture", fa: "معماری تاریخی", en: "Historical Architecture" },
+    { id: "museums-cultural", fa: "موزه و فرهنگی", en: "Museums & Cultural" },
+    { id: "streets-alleys", fa: "خیابان و کوچه", en: "Streets & Alleys" },
+    { id: "bridges-modern", fa: "پل و مدرن", en: "Bridges & Modern" },
+    { id: "modern-architecture", fa: "معماری مدرن", en: "Modern Architecture" },
+    { id: "urban-viewpoints", fa: "نقاط دید شهری", en: "Urban Viewpoints" },
+    { id: "cafes-indoor", fa: "کافه و داخلی", en: "Cafes & Indoor" }
+  ];
+
+  const STYLE_CATEGORIES = [
+    { id: "portrait", fa: "پرتره", en: "Portrait" },
+    { id: "street", fa: "خیابانی", en: "Street" },
+    { id: "night", fa: "شب", en: "Night" },
+    { id: "architectural", fa: "معماری", en: "Architectural" },
+    { id: "landscape", fa: "منظره", en: "Landscape" },
+    { id: "cinematic", fa: "سینمایی", en: "Cinematic" },
+    { id: "mobile", fa: "موبایل", en: "Mobile" },
+    { id: "historical", fa: "تاریخی", en: "Historical" },
+    { id: "product", fa: "محصول", en: "Product" },
+    { id: "film", fa: "فیلم", en: "Film" }
+  ];
+
+  const PERMISSION_LABELS = {
+    permitted: { fa: "عکاسی مجاز", en: "Photography permitted", cls: "permitted" },
+    permitted_with_restrictions: { fa: "مجاز با محدودیت", en: "Permitted with restrictions", cls: "restricted" },
+    permission_required: { fa: "نیاز به مجوز", en: "Permission may be required", cls: "restricted" },
+    not_verified: { fa: "قوانین تأیید نشده", en: "Rules not verified", cls: "unknown" }
+  };
+
+  const STYLE_LABELS = {
+    architectural: { fa: "معماری", en: "Architectural" },
+    portrait: { fa: "پرتره", en: "Portrait" },
+    street: { fa: "خیابانی", en: "Street" },
+    landscape: { fa: "منظره", en: "Landscape" },
+    night: { fa: "شب", en: "Night" },
+    cinematic: { fa: "سینمایی", en: "Cinematic" },
+    historical: { fa: "تاریخی", en: "Historical" },
+    mobile: { fa: "موبایل", en: "Mobile" },
+    urban: { fa: "شهری", en: "Urban" },
+    documentary: { fa: "مستند", en: "Documentary" }
+  };
+
+  // ---------- State ----------
+  let locations = [];
+  let map = null;
+  let markerCluster = null;
+  let markersById = {};
+  let activeFilters = new Set();
+  let currentLang = "fa";
+  let favorites = new Set();
+  let recent = [];
+  let selectedId = null;
+
+  // ---------- DOM ----------
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  // ---------- i18n helpers ----------
+  function t(fa, en) {
+    return currentLang === "fa" ? fa : en;
+  }
+
+  function nameOf(loc) {
+    return currentLang === "fa" ? loc.name_fa : (loc.name_en || loc.name_fa);
+  }
+
+  // ---------- Storage ----------
+  function loadStorage() {
+    try {
+      const f = localStorage.getItem(STORAGE_FAV);
+      if (f) favorites = new Set(JSON.parse(f));
+      const r = localStorage.getItem(STORAGE_RECENT);
+      if (r) recent = JSON.parse(r);
+      const l = localStorage.getItem(STORAGE_LANG);
+      if (l === "en" || l === "fa") currentLang = l;
+    } catch (_) { /* ignore */ }
+  }
+
+  function saveFavorites() {
+    try {
+      localStorage.setItem(STORAGE_FAV, JSON.stringify([...favorites]));
+    } catch (_) { /* ignore */ }
+  }
+
+  function saveRecent() {
+    try {
+      localStorage.setItem(STORAGE_RECENT, JSON.stringify(recent.slice(0, 20)));
+    } catch (_) { /* ignore */ }
+  }
+
+  function saveLang() {
+    try {
+      localStorage.setItem(STORAGE_LANG, currentLang);
+    } catch (_) { /* ignore */ }
+  }
+
+  // ---------- Map ----------
+  function initMap() {
+    const mapEl = $("#map");
+    if (!mapEl) return;
+
+    try {
+      map = L.map("map", {
+        center: TEHRAN_CENTER,
+        zoom: TEHRAN_ZOOM,
+        zoomControl: false,
+        attributionControl: true
+      });
+
+      L.control.zoom({ position: "bottomright" }).addTo(map);
+
+      const tiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19
+      });
+
+      tiles.on("tileerror", () => {
+        // Fallback already handled by not showing error for single tiles
+      });
+
+      tiles.addTo(map);
+
+      markerCluster = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        iconCreateFunction: function (cluster) {
+          const count = cluster.getChildCount();
+          return L.divIcon({
+            html: `<div><span>${count}</span></div>`,
+            className: "marker-cluster-custom",
+            iconSize: L.point(40, 40)
+          });
+        }
+      });
+
+      map.addLayer(markerCluster);
+
+      // Handle load failure for tiles after timeout
+      setTimeout(() => {
+        if (!map) return;
+        // Map is interactive even if some tiles fail
+      }, 5000);
+
+    } catch (err) {
+      console.error("Map init error:", err);
+      showMapError();
+    }
+  }
+
+  function showMapError() {
+    const err = $("#map-error");
+    if (err) err.hidden = false;
+  }
+
+  function createMarkerIcon() {
+    return L.divIcon({
+      className: "",
+      html: `<div class="photo-marker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -16]
+    });
+  }
+
+  function renderMarkers(list) {
+    if (!markerCluster) return;
+    markerCluster.clearLayers();
+    markersById = {};
+
+    list.forEach((loc) => {
+      if (!loc.latitude || !loc.longitude) return;
+      const marker = L.marker([loc.latitude, loc.longitude], {
+        icon: createMarkerIcon(),
+        title: nameOf(loc)
+      });
+      marker.on("click", () => openDetail(loc.id));
+      markersById[loc.id] = marker;
+      markerCluster.addLayer(marker);
+    });
+  }
+
+  function filterLocations() {
+    let result = locations.slice();
+
+    const query = ($("#search-input")?.value || "").trim().toLowerCase();
+    if (query) {
+      result = result.filter((loc) => {
+        const hay = [
+          loc.name_fa,
+          loc.name_en,
+          loc.neighborhood,
+          loc.address,
+          loc.description,
+          ...(loc.categories || []),
+          ...(loc.photography_styles || [])
+        ].join(" ").toLowerCase();
+        return hay.includes(query);
+      });
+    }
+
+    if (activeFilters.size > 0) {
+      result = result.filter((loc) => {
+        const cats = new Set([...(loc.categories || []), ...(loc.photography_styles || [])]);
+        for (const f of activeFilters) {
+          if (cats.has(f)) return true;
+        }
+        return false;
+      });
+    }
+
+    return result;
+  }
+
+  function applyFiltersAndSearch() {
+    const filtered = filterLocations();
+    renderMarkers(filtered);
+    updateFilterBadge();
+  }
+
+  // ---------- Detail panel ----------
+  function permissionLabel(status) {
+    const key = status || "not_verified";
+    const info = PERMISSION_LABELS[key] || PERMISSION_LABELS.not_verified;
+    return info;
+  }
+
+  function openDetail(id) {
+    const loc = locations.find((l) => l.id === id);
+    if (!loc) return;
+    selectedId = id;
+
+    // Recent
+    recent = recent.filter((r) => r !== id);
+    recent.unshift(id);
+    if (recent.length > 20) recent.pop();
+    saveRecent();
+
+    const panel = $("#detail-panel");
+    const content = $("#detail-content");
+    if (!panel || !content) return;
+
+    const perm = permissionLabel(loc.photography_permission_status);
+    const isFav = favorites.has(id);
+
+    const scores = loc.suitability_scores || {};
+    const scoreHtml = Object.entries(scores)
+      .map(([k, v]) => {
+        const label = STYLE_LABELS[k] ? t(STYLE_LABELS[k].fa, STYLE_LABELS[k].en) : k;
+        return `<div class="score-item">
+          <span class="label">${label}</span>
+          <div class="score-bar"><div class="score-bar-fill" style="width:${v * 10}%"></div></div>
+          <span class="num">${v}</span>
+        </div>`;
+      })
+      .join("");
+
+    const restrictions = loc.restrictions || {};
+    const restKeys = {
+      personal: t("شخصی", "Personal"),
+      commercial: t("تجاری", "Commercial"),
+      tripod: t("سه‌پایه", "Tripod"),
+      flash: t("فلاش", "Flash"),
+      drone: t("پهپاد", "Drone"),
+      professional: t("حرفه‌ای", "Professional")
+    };
+    const restHtml = Object.entries(restrictions)
+      .map(([k, v]) => {
+        if (!v) return "";
+        return `<div class="restriction-item"><span class="key">${restKeys[k] || k}</span><span>${v}</span></div>`;
+      })
+      .join("");
+
+    const tags = (loc.photography_styles || [])
+      .map((s) => {
+        const l = STYLE_LABELS[s] ? t(STYLE_LABELS[s].fa, STYLE_LABELS[s].en) : s;
+        return `<span class="tag">${l}</span>`;
+      })
+      .join("");
+
+    const mapsUrl = `https://www.openstreetmap.org/directions?to=${loc.latitude}%2C${loc.longitude}`;
+    const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${loc.latitude},${loc.longitude}`;
+
+    content.innerHTML = `
+      <div class="detail-hero">
+        <div class="detail-hero-content">
+          <h1>${loc.name_fa}</h1>
+          ${loc.name_en ? `<div class="name-en">${loc.name_en}</div>` : ""}
+          <div class="permission-badge ${perm.cls}">${t(perm.fa, perm.en)}</div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="btn-secondary btn-fav ${isFav ? "active" : ""}" id="btn-toggle-fav" aria-label="${t("علاقه‌مندی", "Favorite")}">
+          ${isFav ? t("در علاقه‌مندی‌ها", "Saved") : t("ذخیره", "Save")}
+        </button>
+        <a class="btn-secondary" href="${gmapsUrl}" target="_blank" rel="noopener">${t("مسیریابی", "Directions")}</a>
+        ${loc.official_source_url ? `<a class="btn-text" href="${loc.official_source_url}" target="_blank" rel="noopener">${t("منبع رسمی", "Official source")}</a>` : ""}
+      </div>
+
+      <div class="detail-section">
+        <h3>${t("معرفی", "Overview")}</h3>
+        <div class="meta-row">
+          <span><strong>${t("محله", "Neighborhood")}:</strong> ${loc.neighborhood || "—"}</span>
+        </div>
+        <div class="meta-row">
+          <span><strong>${t("آدرس", "Address")}:</strong> ${loc.address || "—"}</span>
+        </div>
+        <div class="meta-row">
+          <span><strong>${t("مختصات", "Coordinates")}:</strong> ${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)}</span>
+        </div>
+        <p>${loc.description || t("توضیحی ثبت نشده.", "No description available.")}</p>
+        ${tags ? `<div class="tag-list">${tags}</div>` : ""}
+      </div>
+
+      ${scoreHtml ? `
+      <div class="detail-section">
+        <h3>${t("مناسبت سبکی (امتیاز تحریریه‌ای)", "Style suitability (editorial scores)")}</h3>
+        <p class="muted">${t("این امتیازها بر اساس ارزیابی تحریریه‌ای هستند، نه رأی کاربران.", "These are editorial suitability scores, not community ratings.")}</p>
+        <div class="score-list">${scoreHtml}</div>
+      </div>` : ""}
+
+      ${loc.lighting_tips ? `
+      <div class="detail-section">
+        <h3>${t("راهنمای نور", "Lighting guide")}</h3>
+        <p>${loc.lighting_tips}</p>
+      </div>` : ""}
+
+      ${loc.composition_tips ? `
+      <div class="detail-section">
+        <h3>${t("ترکیب‌بندی", "Composition")}</h3>
+        <p>${loc.composition_tips}</p>
+      </div>` : ""}
+
+      ${loc.equipment_recommendations ? `
+      <div class="detail-section">
+        <h3>${t("تجهیزات پیشنهادی", "Equipment suggestions")}</h3>
+        <p>${loc.equipment_recommendations}</p>
+        <p class="muted">${t("تنظیمات به‌عنوان نقطه شروع پیشنهاد می‌شوند، نه مقدار قطعی.", "Settings are starting points, not guaranteed optima.")}</p>
+      </div>` : ""}
+
+      <div class="detail-section">
+        <h3>${t("مجوز و محدودیت‌ها", "Permissions & restrictions")}</h3>
+        ${restHtml ? `<div class="restriction-grid">${restHtml}</div>` : `<p class="muted">${t("جزئیات بیشتری ثبت نشده. با محل هماهنگ کنید.", "No further details recorded. Check with the venue.")}</p>`}
+        <p class="muted" style="margin-top:10px">${t("آخرین بررسی", "Last verified")}: ${loc.last_verified || t("نامشخص", "Unknown")}</p>
+      </div>
+
+      <div class="detail-section">
+        <h3>${t("اطلاعات عملی", "Practical info")}</h3>
+        <div class="meta-row"><span><strong>${t("ورودیه", "Entrance")}:</strong> ${loc.entrance_fee || t("تأیید نشده", "Not verified")}</span></div>
+        <div class="meta-row"><span><strong>${t("ساعات", "Hours")}:</strong> ${loc.opening_hours || t("تأیید نشده — با محل چک کنید", "Not verified — check venue")}</span></div>
+        <div class="meta-row"><span><strong>${t("دسترسی", "Accessibility")}:</strong> ${loc.accessibility || t("اطلاعات ثبت نشده", "Not recorded")}</span></div>
+      </div>
+    `;
+
+    panel.classList.add("open");
+    panel.setAttribute("aria-hidden", "false");
+
+    const favBtn = $("#btn-toggle-fav");
+    if (favBtn) {
+      favBtn.addEventListener("click", () => {
+        if (favorites.has(id)) {
+          favorites.delete(id);
+        } else {
+          favorites.add(id);
+        }
+        saveFavorites();
+        openDetail(id); // refresh
+      });
+    }
+
+    // Fly to location
+    if (map && markersById[id]) {
+      map.flyTo([loc.latitude, loc.longitude], Math.max(map.getZoom(), 15), { duration: 0.6 });
+    }
+
+    closePanels(["filters", "menu"]);
+  }
+
+  function closeDetail() {
+    const panel = $("#detail-panel");
+    if (panel) {
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+    }
+    selectedId = null;
+  }
+
+  // ---------- Filters UI ----------
+  function buildFilterChips() {
+    const placeEl = $("#place-filters");
+    const styleEl = $("#style-filters");
+    if (!placeEl || !styleEl) return;
+
+    placeEl.innerHTML = PLACE_CATEGORIES.map((c) =>
+      `<button type="button" class="chip" data-filter="${c.id}">${t(c.fa, c.en)}</button>`
+    ).join("");
+
+    styleEl.innerHTML = STYLE_CATEGORIES.map((c) =>
+      `<button type="button" class="chip" data-filter="${c.id}">${t(c.fa, c.en)}</button>`
+    ).join("");
+
+    $$(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const id = chip.dataset.filter;
+        if (activeFilters.has(id)) {
+          activeFilters.delete(id);
+          chip.classList.remove("active");
+        } else {
+          activeFilters.add(id);
+          chip.classList.add("active");
+        }
+        applyFiltersAndSearch();
+      });
+    });
+  }
+
+  function updateFilterBadge() {
+    const badge = $("#filter-badge");
+    if (!badge) return;
+    if (activeFilters.size > 0) {
+      badge.textContent = activeFilters.size;
+      badge.hidden = false;
+    } else {
+      badge.hidden = true;
+    }
+  }
+
+  function clearAllFilters() {
+    activeFilters.clear();
+    $$(".chip").forEach((c) => c.classList.remove("active"));
+    applyFiltersAndSearch();
+  }
+
+  // ---------- Panels / Modals ----------
+  function openPanel(name) {
+    closePanels(["filters", "menu", "detail"]);
+    if (name === "filters") {
+      $("#filters-panel")?.classList.add("open");
+      $("#filters-panel")?.setAttribute("aria-hidden", "false");
+    } else if (name === "menu") {
+      $("#side-menu")?.classList.add("open");
+      $("#side-menu")?.setAttribute("aria-hidden", "false");
+    }
+    $("#overlay").hidden = false;
+  }
+
+  function closePanels(names) {
+    if (!names || names.includes("filters")) {
+      $("#filters-panel")?.classList.remove("open");
+      $("#filters-panel")?.setAttribute("aria-hidden", "true");
+    }
+    if (!names || names.includes("menu")) {
+      $("#side-menu")?.classList.remove("open");
+      $("#side-menu")?.setAttribute("aria-hidden", "true");
+    }
+    if (!names || names.includes("detail")) {
+      // keep detail open on desktop sometimes — only close if requested
+    }
+    if (!names || names.length >= 2) {
+      const anyOpen = $("#filters-panel")?.classList.contains("open") ||
+        $("#side-menu")?.classList.contains("open");
+      if (!anyOpen) $("#overlay").hidden = true;
+    }
+  }
+
+  function openModal(id) {
+    const m = $(`#${id}`);
+    if (m) {
+      m.classList.add("open");
+      m.setAttribute("aria-hidden", "false");
+    }
+  }
+
+  function closeModal(id) {
+    const m = $(`#${id}`);
+    if (m) {
+      m.classList.remove("open");
+      m.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  // ---------- Assistant ----------
+  function runAssistant(e) {
+    e.preventDefault();
+    const style = $("#asst-style")?.value;
+    const time = $("#asst-time")?.value;
+    const camera = $("#asst-camera")?.value;
+    const space = $("#asst-space")?.value;
+    const freeOnly = $("#asst-free")?.checked;
+
+    let results = locations.slice();
+
+    if (style) {
+      results = results.filter((loc) => {
+        const styles = loc.photography_styles || [];
+        const scores = loc.suitability_scores || {};
+        return styles.includes(style) || scores[style] >= 6;
+      });
+      results.sort((a, b) => {
+        const sa = (a.suitability_scores || {})[style] || 0;
+        const sb = (b.suitability_scores || {})[style] || 0;
+        return sb - sa;
+      });
+    }
+
+    if (time === "night") {
+      results = results.filter((loc) =>
+        (loc.photography_styles || []).includes("night") ||
+        (loc.categories || []).includes("night") ||
+        (loc.suitability_scores || {}).night >= 6
+      );
+    } else if (time === "golden" || time === "blue") {
+      results = results.filter((loc) =>
+        (loc.lighting_tips || "").length > 0 ||
+        (loc.suitability_scores || {}).landscape >= 6 ||
+        (loc.suitability_scores || {}).cinematic >= 6
+      );
+    }
+
+    if (camera === "phone") {
+      results = results.filter((loc) =>
+        (loc.photography_styles || []).includes("mobile") ||
+        (loc.equipment_recommendations || "").toLowerCase().includes("موبایل") ||
+        (loc.equipment_recommendations || "").toLowerCase().includes("mobile")
+      );
+    }
+
+    if (space === "outdoor") {
+      results = results.filter((loc) => {
+        const cats = loc.categories || [];
+        return cats.some((c) =>
+          ["parks-gardens", "streets-alleys", "bridges-modern", "urban-viewpoints", "landscape"].includes(c)
+        ) || !(cats.includes("museums-cultural") && cats.length === 1);
+      });
+    } else if (space === "indoor") {
+      results = results.filter((loc) =>
+        (loc.categories || []).some((c) => ["museums-cultural", "cafes-indoor", "historical-architecture"].includes(c))
+      );
+    }
+
+    if (freeOnly) {
+      results = results.filter((loc) => {
+        const fee = (loc.entrance_fee || "").toLowerCase();
+        return fee.includes("رایگان") || fee.includes("free");
+      });
+    }
+
+    const container = $("#assistant-results");
+    if (!container) return;
+
+    if (results.length === 0) {
+      container.innerHTML = `<div class="empty-state">${t("مکانی با این شرایط پیدا نشد. فیلترها را تغییر دهید.", "No locations matched. Try adjusting filters.")}</div>`;
+    } else {
+      container.innerHTML = results.slice(0, 8).map((loc) => {
+        const reason = [];
+        if (style && (loc.suitability_scores || {})[style]) {
+          reason.push(t(`امتیاز ${STYLE_LABELS[style]?.fa || style}: ${(loc.suitability_scores || {})[style]}`, `Score ${style}: ${(loc.suitability_scores || {})[style]}`));
+        }
+        if (freeOnly) reason.push(t("ورود رایگان (طبق داده)", "Free entry (per data)"));
+        return `<div class="result-card" data-id="${loc.id}">
+          <h4>${nameOf(loc)}</h4>
+          <p>${reason.join(" · ") || loc.neighborhood || ""}</p>
+        </div>`;
+      }).join("");
+
+      container.querySelectorAll(".result-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          closeModal("assistant-modal");
+          openDetail(card.dataset.id);
+        });
+      });
+    }
+    container.hidden = false;
+  }
+
+  // ---------- Lists (favorites / recent) ----------
+  function showList(type) {
+    const title = $("#list-title");
+    const content = $("#list-content");
+    if (!title || !content) return;
+
+    let ids = [];
+    if (type === "favorites") {
+      title.textContent = t("علاقه‌مندی‌ها", "Favorites");
+      ids = [...favorites];
+    } else {
+      title.textContent = t("بازدیدهای اخیر", "Recently viewed");
+      ids = recent;
+    }
+
+    if (ids.length === 0) {
+      content.innerHTML = `<div class="empty-state">${t("موردی نیست.", "Nothing here yet.")}</div>`;
+    } else {
+      content.innerHTML = ids.map((id) => {
+        const loc = locations.find((l) => l.id === id);
+        if (!loc) return "";
+        return `<div class="list-item" data-id="${id}">
+          <div>
+            <h4>${nameOf(loc)}</h4>
+            <div class="sub">${loc.neighborhood || ""}</div>
+          </div>
+        </div>`;
+      }).join("");
+
+      content.querySelectorAll(".list-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          closeModal("list-modal");
+          openDetail(item.dataset.id);
+        });
+      });
+    }
+    openModal("list-modal");
+  }
+
+  // ---------- Language ----------
+  function applyLanguage() {
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === "fa" ? "rtl" : "ltr";
+
+    const search = $("#search-input");
+    if (search) {
+      search.placeholder = t("جستجوی مکان، محله یا سبک عکاسی…", "Search places, neighborhoods, or styles…");
+    }
+
+    const langBtn = $("#btn-lang .lang-label");
+    if (langBtn) langBtn.textContent = currentLang === "fa" ? "EN" : "فا";
+
+    buildFilterChips();
+    // Re-apply active state
+    $$(".chip").forEach((chip) => {
+      if (activeFilters.has(chip.dataset.filter)) chip.classList.add("active");
+    });
+
+    if (selectedId) openDetail(selectedId);
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === "fa" ? "en" : "fa";
+    saveLang();
+    applyLanguage();
+  }
+
+  // ---------- Events ----------
+  function bindEvents() {
+    $("#btn-menu")?.addEventListener("click", () => openPanel("menu"));
+    $("#close-menu")?.addEventListener("click", () => closePanels(["menu"]));
+    $("#btn-filters")?.addEventListener("click", () => openPanel("filters"));
+    $("#close-filters")?.addEventListener("click", () => closePanels(["filters"]));
+    $("#apply-filters")?.addEventListener("click", () => closePanels(["filters"]));
+    $("#clear-filters")?.addEventListener("click", clearAllFilters);
+
+    $("#overlay")?.addEventListener("click", () => {
+      closePanels(["filters", "menu"]);
+      closeDetail();
+    });
+
+    $("#btn-lang")?.addEventListener("click", toggleLang);
+
+    $("#btn-overview")?.addEventListener("click", () => {
+      if (map) map.flyTo(TEHRAN_CENTER, TEHRAN_ZOOM, { duration: 0.8 });
+    });
+
+    $("#btn-locate")?.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert(t("موقعیت‌یابی در این دستگاه پشتیبانی نمی‌شود.", "Geolocation is not supported."));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          if (map) {
+            map.flyTo([latitude, longitude], 14, { duration: 0.8 });
+            L.circleMarker([latitude, longitude], {
+              radius: 8,
+              color: "#c4a574",
+              fillColor: "#c4a574",
+              fillOpacity: 0.6
+            }).addTo(map);
+          }
+        },
+        () => {
+          alert(t("اجازه دسترسی به موقعیت داده نشد.", "Location permission denied."));
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+
+    const searchInput = $("#search-input");
+    const clearSearch = $("#clear-search");
+    searchInput?.addEventListener("input", () => {
+      if (clearSearch) clearSearch.hidden = !searchInput.value;
+      applyFiltersAndSearch();
+    });
+    clearSearch?.addEventListener("click", () => {
+      if (searchInput) searchInput.value = "";
+      clearSearch.hidden = true;
+      applyFiltersAndSearch();
+    });
+
+    // Menu actions
+    $$(".menu-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        const action = item.dataset.action;
+        closePanels(["menu"]);
+        if (action === "assistant") {
+          $("#assistant-results").hidden = true;
+          openModal("assistant-modal");
+        } else if (action === "favorites") {
+          showList("favorites");
+        } else if (action === "recent") {
+          showList("recent");
+        } else if (action === "about") {
+          openModal("about-modal");
+        }
+      });
+    });
+
+    $("#assistant-form")?.addEventListener("submit", runAssistant);
+
+    // Close modals
+    $$("[data-close]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const target = el.dataset.close;
+        if (target === "assistant") closeModal("assistant-modal");
+        else if (target === "list") closeModal("list-modal");
+        else if (target === "about") closeModal("about-modal");
+      });
+    });
+
+    $("#retry-map")?.addEventListener("click", () => {
+      location.reload();
+    });
+
+    // Close detail on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeModal("assistant-modal");
+        closeModal("list-modal");
+        closeModal("about-modal");
+        closePanels(["filters", "menu"]);
+        closeDetail();
+      }
+    });
+
+    // Click outside detail on desktop to close
+    document.addEventListener("click", (e) => {
+      const panel = $("#detail-panel");
+      if (!panel?.classList.contains("open")) return;
+      if (panel.contains(e.target)) return;
+      if (e.target.closest(".photo-marker") || e.target.closest(".leaflet-marker-icon")) return;
+      if (e.target.closest(".top-bar") || e.target.closest(".map-controls")) return;
+      if (e.target.closest(".modal") || e.target.closest(".filters-panel") || e.target.closest(".side-menu")) return;
+      // Only close if click is on map
+      if (e.target.closest("#map") || e.target.id === "map") {
+        closeDetail();
+      }
+    });
+  }
+
+  // ---------- Load data ----------
+  async function loadLocations() {
+    // Data embedded in this single-file build
+    locations = window.__LOCATIONS__ || [];
+    applyFiltersAndSearch();
+  }
+
+  // ---------- Init ----------
+  async function init() {
+    loadStorage();
+    applyLanguage();
+    initMap();
+    bindEvents();
+    await loadLocations();
+
+    // Service worker omitted in single-file build
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+
+  </script>
+</body>
+</html>
